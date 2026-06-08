@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Install & Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install backend dependencies
+        run: npm ci --prefix backend
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Frontend lint
+        run: npm run lint --prefix frontend
+
+      - name: Frontend build
+        run: npm run build --prefix frontend
+
+  backend-smoke:
+    name: Backend smoke check
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        run: npm ci --prefix backend
+
+      - name: Backend smoke
+        run: node -e "console.log('backend dependencies installed successfully')"
+
+      - name: Backend lint
+        run: npm run lint --prefix backend
+
+      - name: Backend test
+        run: npm test --prefix backend
