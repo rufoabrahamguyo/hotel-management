@@ -72,21 +72,11 @@ export default function Login() {
           overflow: 'hidden',
           padding: 'clamp(32px, 6vw, 72px)',
           color: '#f4f6f8',
-          background:
-            'linear-gradient(145deg, #0c1829 0%, #1a2f4a 42%, #0d2137 100%)',
+          background: '#0c1829',
         }}
         className="login-brand-panel"
       >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.12), transparent 45%),
-              radial-gradient(circle at 80% 60%, rgba(100, 180, 255, 0.08), transparent 40%)`,
-            pointerEvents: 'none',
-          }}
-        />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 420 }}>
+        <div style={{ maxWidth: 420 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
             <SafetyCertificateOutlined style={{ fontSize: 28, color: '#d4af37' }} />
             <span style={{ fontSize: 13, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85 }}>
