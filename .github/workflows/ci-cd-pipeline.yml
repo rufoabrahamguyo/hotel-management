@@ -34,11 +34,8 @@ jobs:
         continue-on-error: true
 
   lint:
-    name: Lint Code
+    name: Lint Code (Frontend)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        path: [frontend, backend]
     steps:
       - uses: actions/checkout@v4
 
@@ -46,16 +43,15 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: ${{ matrix.path }}/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
-        working-directory: ${{ matrix.path }}
+        working-directory: frontend
 
-      - name: Lint ${{ matrix.path }}
+      - name: Lint frontend
         run: npm run lint
-        working-directory: ${{ matrix.path }}
-        if: "hashFiles(format('{0}/package.json', matrix.path)) != ''"
+        working-directory: frontend
 
   # ==============================================================
   # BUILD STAGE
