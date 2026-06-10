@@ -1,5 +1,7 @@
 # Hotel PMS
 
+[![CI/CD Pipeline](https://github.com/rufoabrahamguyo/hotel-management/actions/workflows/ci-cd-pipeline.yml/badge.svg?branch=main)](https://github.com/rufoabrahamguyo/hotel-management/actions/workflows/ci-cd-pipeline.yml)
+
 Web-based **property management** workspace for a single hotel: staff sign in, see an operations overview, manage **guests and reservations**, **rooms and housekeeping status**, **reports**, **property settings**, and **staff accounts**. 
 
 
