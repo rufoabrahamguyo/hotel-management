@@ -4,7 +4,7 @@ import { theme } from 'antd';
 export const appShellTheme = {
   algorithm: theme.darkAlgorithm,
   token: {
-    colorPrimary: '#1f6feb',
+    colorPrimary: '#4da6ff',
     colorSuccess: '#3fb950',
     colorBgLayout: '#0d1117',
     colorBgContainer: '#161b22',
@@ -32,7 +32,8 @@ export const appShellTheme = {
       colorBorder: '#30363d',
     },
     Button: {
-      colorPrimaryHover: '#388bfd',
+      colorPrimaryHover: '#5eb3ff',
     },
   },
 };
+
