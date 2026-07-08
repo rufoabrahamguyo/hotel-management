@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "NODE_ENV=test mocha --require @babel/register --require ./src/test/setup.js 'src/**/__tests__/**/*.test.js' 'src/**/__tests__/**/*.test.jsx'",
+    "test:watch": "NODE_ENV=test mocha --require @babel/register --require ./src/test/setup.js --watch 'src/**/__tests__/**/*.test.js' 'src/**/__tests__/**/*.test.jsx'",
+    "test:coverage": "nyc --reporter=text --reporter=html npm test",
+    "test:verbose": "NODE_ENV=test mocha --require @babel/register --require ./src/test/setup.js --reporter spec 'src/**/__tests__/**/*.test.js' 'src/**/__tests__/**/*.test.jsx'"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.1",
@@ -23,15 +27,27 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/register": "^8.0.1",
     "@eslint/js": "^9.39.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^25.5.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "chai": "^6.2.2",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "ignore-styles": "^5.0.1",
+    "jsdom": "^29.1.1",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^11.7.6",
     "vite": "^8.0.4"
   }
 }
