@@ -1,119 +1,223 @@
-# Hotel PMS
+# Hotel PMS (Hotely)
 
-Web-based **property management** workspace for a single hotel: staff sign in, see an operations overview, manage **guests and reservations**, **rooms and housekeeping status**, **reports**, **property settings**, and **staff accounts**. The UI is a dark “ops console” (sidebar, main area, optional status column on wide screens). Data lives in **PostgreSQL** and is served by a small **Express** API.
+Multi-tenant hotel property management system. Staff sign in, select a property, then manage guests, reservations, rooms, reports, settings, and staff accounts. Access is role-based (reception, housekeeping, maintenance, revenue, management, and system admin).
 
-**This repo is a monorepo:** React frontend + Node backend + Docker Compose for Postgres and the API.
+This repository is a monorepo: React frontend, Express API, and Docker Compose for PostgreSQL plus the API.
 
-## What you can do with it
+## Features
 
-| Area | Purpose |
-|------|--------|
-| **Overview** | Role-aware snapshot: available rooms, arrivals/departures, housekeeping load, revenue estimate (from live data when the API is up). |
-| **Guests & arrivals** | Guest registry, reservations, check-in / check-out flows; ties to room inventory. |
-| **Rooms** | Room list, status (vacant, occupied, dirty, maintenance, etc.), rates, housekeeping notes. |
-| **Reports** | Aggregated metrics: room mix, bookings, pipeline revenue, occupancy-style figures. |
-| **Staff accounts** | Create and manage hotel staff (roles, suspend/activate) after the bootstrap admin exists. |
-| **Settings** | Property name, timezone, default check-in/out times. |
+| Area | What it does |
+|------|----------------|
+| Dashboard | Role-aware live metrics (arrivals, rooms, housekeeping, revenue, and so on) |
+| Guests | Guest registry, reservations, check-in and check-out |
+| Rooms | Inventory and status (vacant, occupied, dirty, maintenance, etc.) |
+| Reports | Occupancy-style and revenue pipeline summaries |
+| Staff | Create and manage accounts within the org hierarchy |
+| Properties | SystemAdmin creates and archives properties |
+| Settings | Property name, timezone, default check-in/out (SystemAdmin and General Manager) |
 
-**Auth:** JWT-based staff login. First-time access uses a **bootstrap system administrator** configured in environment variables (there is no public self-service setup page).
+**Tenancy:** An organization owns one or more properties. Rooms, guests, reservations, and settings are scoped to the active property. Non-admin staff are assigned through `staff_property`.
+
+**Auth:** JWT staff login. Optional public registration creates an organization, first property, and SystemAdmin (`ALLOW_PUBLIC_REGISTER`). Otherwise use `BOOTSTRAP_ADMIN_*` when the staff table has no SystemAdmin yet.
 
 ## Tech stack
 
-| Part | Stack |
-|------|--------|
+| Layer | Stack |
+|-------|--------|
 | Frontend | React (Vite), Ant Design, TanStack Query, Zustand, React Router |
 | Backend | Node.js, Express, PostgreSQL (`pg`), bcrypt, JWT |
-| Local / deploy | Docker Compose: Postgres 16 + API image; frontend often run on the host in dev |
+| Local stack | Docker Compose (Postgres 16 + API); frontend usually runs on the host in development |
 
 ## Repository layout
 
-- **`frontend/`** – React SPA (`npm run dev` here, or `npm run dev:frontend` from the repo root).
-- **`backend/`** – Express API (`npm run dev` here, or `npm run dev:backend` from root).
+```
+frontend/          React SPA
+backend/           Express API, SQL schema and migrations
+backend/db/        schema.sql and migrate_*.sql
+docs/              Diagrams (draw.io)
+docker-compose.yml Postgres + API
+```
 
-Configure **`frontend/.env`** (see `frontend/.env.example`) and **`backend/.env`** (see `backend/.env.example`) when not using only Docker defaults.
+Root `package.json` proxies common scripts into `frontend/` and `backend/`.
 
-## Roles (summary)
+## Prerequisites
 
-The product is built around a **SystemAdmin → General Manager → department managers → line staff** model. Typical mapping:
+- Node.js 20+ (or current LTS)
+- npm
+- Docker and Docker Compose (recommended for Postgres + API)
+- Or a local PostgreSQL 16 instance if you run the API outside Docker
 
-| Who | Typically creates |
-|-----|-------------------|
-| SystemAdmin | General Manager (first handoff), recovery for other roles |
-| General Manager | Department heads |
-| Front Office Manager | Receptionists |
-| Housekeeping Manager | Housekeeping staff |
-| Maintenance Manager | Maintenance staff |
+## Quick start (recommended)
 
-(Revenue Manager and Accountant are oriented toward reporting in this build, not provisioning every role type.)
+### 1. Clone and install
 
-## Quick start (development)
+```bash
+git clone <repo-url>
+cd hotel-frontend
+npm install --prefix frontend
+npm install --prefix backend
+```
 
-From the repo root:
+### 2. Docker env (API + Postgres)
 
-- `npm run dev` – frontend dev server (needs `frontend/.env` with API URL).
-- `npm run dev:backend` – API with `--watch` (PostgreSQL must be reachable; use Docker or local Postgres).
+```bash
+cp docker.env.example .env
+```
 
-Initialize / migrate schema on a **host Postgres** when needed:
+Edit `.env` and set at least:
+
+- `JWT_SECRET` (long random string, 16+ characters; not a placeholder)
+- `BOOTSTRAP_ADMIN_PASSWORD` (strong password for the first SystemAdmin)
+
+### 3. Start Postgres and the API
+
+```bash
+npm run docker:up
+```
+
+Or: `docker compose up --build`
+
+- API: http://localhost:4000
+- Health: http://localhost:4000/api/health
+- Postgres: localhost:5432 (defaults often user/db `hotel`; password from `.env`)
+
+A fresh Postgres volume runs SQL under `backend/db/` via `docker-entrypoint-initdb.d`.
+
+### 4. Frontend env and dev server
+
+```bash
+cp frontend/.env.example frontend/.env
+```
+
+Ensure `VITE_API_BASE_URL=http://localhost:4000/api`, then:
+
+```bash
+npm run dev
+```
+
+Open http://localhost:5173 and sign in with the bootstrap admin from `.env` (`BOOTSTRAP_ADMIN_USERNAME` / `BOOTSTRAP_ADMIN_PASSWORD`). Pick or create a property when prompted.
+
+### 5. Stop Docker
+
+```bash
+npm run docker:down
+```
+
+Data in the Docker volume is kept unless you remove volumes (`docker compose down -v` wipes the database; local dev only).
+
+## Alternative: API on the host
+
+Use Docker only for Postgres, or use your own Postgres.
+
+1. Set `backend/.env` from `backend/.env.example` (at least `DATABASE_URL`, `JWT_SECRET`, bootstrap admin vars).
+2. Apply schema (host Postgres):
 
 ```bash
 npm run backend:init-db
 ```
 
-That applies `backend/db/schema.sql`, `migrate_legacy_roles.sql`, and `migrate_pms_tables.sql`.
-
-## Docker (PostgreSQL + API)
-
-From the **repo root**:
+3. Run API with watch:
 
 ```bash
-docker compose up --build
+npm run dev:backend
 ```
 
-Or: `npm run docker:up` – builds the backend image and starts Postgres and the API. A new Postgres volume runs bundled SQL via `docker-entrypoint-initdb.d`.
+4. Run frontend as above (`npm run dev`).
 
-- API: `http://localhost:4000`
-- Postgres: `localhost:5432` (defaults often `hotel` / `hotel` / `hotel` – **change for production**).
+## Environment reference
 
-Set secrets in a root **`.env`** (see `docker.env.example`): especially **`JWT_SECRET`**, **`BOOTSTRAP_ADMIN_PASSWORD`**, and database credentials.
+| File | Purpose |
+|------|---------|
+| Root `.env` | Read by Docker Compose (copy from `docker.env.example`) |
+| `backend/.env` | Local Node API (copy from `backend/.env.example`) |
+| `frontend/.env` | Vite (copy from `frontend/.env.example`) |
 
-**Frontend in dev:** point Vite at the API, e.g. `VITE_API_BASE_URL=http://localhost:4000/api` in `frontend/.env`.
+Important variables:
 
-### Bootstrap IT account
+| Variable | Where | Notes |
+|----------|--------|--------|
+| `JWT_SECRET` | Compose / backend | Required. Production refuses weak or missing secrets |
+| `BOOTSTRAP_ADMIN_*` | Compose / backend | Creates SystemAdmin once when none exists |
+| `ALLOW_PUBLIC_REGISTER` | Compose / backend | `true` / `false`; Docker default is `false` |
+| `DATABASE_URL` | backend | Host API connection string |
+| `CORS_ORIGIN` | Compose / backend | e.g. `http://localhost:5173` |
+| `VITE_API_BASE_URL` | frontend | e.g. `http://localhost:4000/api` |
 
-There is **no** public first-time setup page. Use **`BOOTSTRAP_ADMIN_*`** variables; on first boot with an empty `staff` table, a **SystemAdmin** account is created **once**.
+Do not commit real `.env` files with production secrets.
 
-- Required: `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD`
-- Optional: `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`
+## Roles (summary)
 
-After login, provision the GM and teams under **Staff accounts**. Prefer **suspend** over delete for departing staff when you need an immediate lockout.
+Hierarchy: SystemAdmin, then General Manager, then department managers, then line staff.
 
-### Existing Postgres volumes (migrations)
+| Actor | Typically creates |
+|-------|-------------------|
+| SystemAdmin | General Manager and recovery for other roles |
+| General Manager | Department heads |
+| Front Office Manager | Receptionists |
+| Housekeeping Manager | Housekeeping staff |
+| Maintenance Manager | Maintenance staff |
 
-Init scripts **do not** re-run after the volume exists. Apply SQL once when you upgrade schema:
+Revenue Manager and Accountant are reporting-focused in this build. The staff API only allows creating and managing roles permitted for the actor.
+
+## Common scripts (repo root)
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Frontend Vite dev server |
+| `npm run dev:backend` | API with `--watch` |
+| `npm run build` | Production frontend build |
+| `npm run lint` | Frontend ESLint |
+| `npm test` | Frontend Vitest + backend Node tests |
+| `npm run backend:init-db` | Apply schema/migrations on host Postgres |
+| `npm run docker:up` | Build and start Compose stack |
+| `npm run docker:up:detached` | Same, detached |
+| `npm run docker:down` | Stop containers |
+| `npm run docker:migrate-db` | Legacy roles migration on existing volume |
+| `npm run docker:migrate-pms` | PMS tables migration on existing volume |
+| `npm run docker:migrate-multitenant` | Org/property migration on existing volume |
+
+Package-local scripts also exist under `frontend/` and `backend/` (`npm test`, `npm run dev`, etc.).
+
+## Testing
+
+```bash
+npm test
+```
+
+- Frontend: Vitest (`frontend/src/**/*.test.js`), including permission matrices and dashboard strategies
+- Backend: Node built-in test runner + supertest (`backend/tests/`), covering permissions, roles, JWT, tenancy, and basic API/middleware behavior
+
+## Migrations on an existing Docker volume
+
+Init scripts do not re-run after the Postgres volume already exists. After pulling schema changes, apply once:
 
 ```bash
 npm run docker:migrate-db
-```
-
-Adds legacy role/status columns (`migrate_legacy_roles.sql`).
-
-```bash
 npm run docker:migrate-pms
+npm run docker:migrate-multitenant
 ```
 
-Adds PMS tables (rooms, guests, reservations, property settings).
+Each pipes the matching file under `backend/db/` into the Compose Postgres service (default user/db `hotel`). If you changed `POSTGRES_USER` or `POSTGRES_DB`, adjust the `psql` command in `package.json` accordingly.
 
-Each command pipes the matching file under `backend/db/` into Postgres (default user/db `hotel`). If your Compose `.env` changes `POSTGRES_USER` or `POSTGRES_DB`, adjust the `psql` invocation accordingly. Nuclear option for local dev only: `docker compose down -v` then bring the stack back up (**wipes the database**).
+## Public registration
 
-### Other Compose helpers
+Controlled by `ALLOW_PUBLIC_REGISTER`:
 
-- `npm run docker:up:detached` – same stack in the background  
-- `npm run docker:down` – stop containers (volume kept unless you add `-v`)
+| Value | Behavior |
+|-------|----------|
+| `true` | Anyone can create a new organization and admin |
+| `false` | Registration disabled (Docker default) |
+| unset | Allowed when `NODE_ENV` is not `production`; denied in production |
 
-## Production build
+`GET /api/auth/registration-status` tells the UI whether signup is open.
 
-- `npm run build` – production build of the frontend (`frontend/`)
+## Production notes
 
----
+- `npm run build` builds the frontend under `frontend/dist`
+- Serve the SPA behind your preferred static host or reverse proxy; point it at the API
+- Set a strong `JWT_SECRET`, disable public registration unless you intend self-serve multi-tenant signup, use HTTPS, and back up Postgres
+- Prefer suspending staff over deleting when you need an immediate lockout
 
-**Security note:** Intended for demos / internal tooling unless you harden JWT secrets, HTTPS, backups, RBAC, and omit committed `.env` files with real passwords.
+## Security
+
+Harden JWT secrets, HTTPS, backups, and RBAC before exposing the system beyond demos or internal use. Never commit production passwords or real `.env` files.

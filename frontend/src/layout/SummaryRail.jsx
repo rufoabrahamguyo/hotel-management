@@ -1,13 +1,66 @@
-import { Card, Typography, Row, Col, Flex, Spin } from 'antd';
+import { Typography, Row, Col, Flex, Spin } from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
-import { normalizeRole, ROLE_DESCRIPTIONS } from '../auth/roles';
+import { canUseFeature } from '../auth/permissions';
 import { useOpsSummary } from '../hooks/useOpsSummary';
+import { propizy } from './propizyTokens';
 
 const { Text, Title } = Typography;
 
+function MetricTile({ value, label, hint, color }) {
+  return (
+    <div
+      style={{
+        textAlign: 'center',
+        padding: '10px 6px',
+        borderRadius: 10,
+        background: propizy.bg,
+      }}
+    >
+      <div style={{ fontSize: 20, fontWeight: 700, color, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
+      <div style={{ fontSize: 11, color: propizy.text, fontWeight: 600, marginTop: 2 }}>{label}</div>
+      {hint ? <div style={{ fontSize: 10, color: propizy.muted, marginTop: 2 }}>{hint}</div> : null}
+    </div>
+  );
+}
+
+function Panel({ title, children }) {
+  return (
+    <div
+      style={{
+        border: `1px solid ${propizy.border}`,
+        borderRadius: 14,
+        padding: 16,
+        background: propizy.surface,
+        boxShadow: '0 1px 2px rgba(12, 24, 41, 0.04)',
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 11,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: propizy.muted,
+          fontWeight: 600,
+          display: 'block',
+          marginBottom: 12,
+        }}
+      >
+        {title}
+      </Text>
+      {children}
+    </div>
+  );
+}
+
 export default function SummaryRail({ user }) {
-  const role = normalizeRole(user?.role);
   const { data: s, isLoading, isError } = useOpsSummary();
+
+  const showOccupancy = canUseFeature('occupancy', user);
+  const showArrivals = canUseFeature('arrivals', user);
+  const showDepartures = canUseFeature('departures', user);
+  const showHousekeeping = canUseFeature('housekeeping', user);
+  const showMaintenance = canUseFeature('maintenance', user);
+  const showRevenue = canUseFeature('revenue', user);
 
   const vacant = Number(s?.vacantRooms) || 0;
   const dirty = Number(s?.dirtyRooms) || 0;
@@ -18,106 +71,174 @@ export default function SummaryRail({ user }) {
   const total = Number(s?.totalRooms) || 0;
   const attention = dirty + maintenance;
   const holdPipeline = cleaning + inspecting;
-  const occPct =
-    total > 0 ? (((occupied / total) * 100).toFixed(1)) : null;
+  const occPct = total > 0 ? ((occupied / total) * 100).toFixed(1) : null;
   const arrToday = s?.arrivalsDueToday;
   const depToday = s?.departuresDueToday;
 
   const trendNeutral = occPct === null ? true : occupied <= vacant;
 
-  return (
-    <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <Card size="small" styles={{ body: { padding: 16 } }}>
-        <Spin spinning={isLoading}>
-          <Flex vertical align="flex-start" gap={12}>
-            <Text type="secondary" style={{ fontSize: 12, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              Current status
-            </Text>
-            <div
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: '50%',
-                border: `2px solid ${trendNeutral ? 'rgba(63,185,80,0.6)' : 'rgba(248,129,129,0.55)'}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: trendNeutral ? '#3fb950' : '#ff7b72',
-              }}
-            >
-              {trendNeutral ? <ArrowUpOutlined style={{ fontSize: 22 }} /> : <ArrowDownOutlined style={{ fontSize: 22 }} />}
-            </div>
-            <Row gutter={[8, 8]} style={{ width: '100%' }}>
-              <Col span={8}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 650, color: '#f85149' }}>{isLoading ? '-' : attention}</div>
-                  <div style={{ fontSize: 10, color: '#8b949e' }}>Attention</div>
-                  <div style={{ fontSize: 9, color: '#484f58' }}>Dirty + out of order</div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 650, color: '#3fb950' }}>{isLoading ? '-' : vacant}</div>
-                  <div style={{ fontSize: 10, color: '#8b949e' }}>Ready</div>
-                  <div style={{ fontSize: 9, color: '#484f58' }}>Vacant</div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 650, color: '#8b949e' }}>{isLoading ? '-' : holdPipeline}</div>
-                  <div style={{ fontSize: 10, color: '#8b949e' }}>In flight</div>
-                  <div style={{ fontSize: 9, color: '#484f58' }}>Cleaning / inspection</div>
-                </div>
-              </Col>
-            </Row>
-            {role ? (
-              <Text type="secondary" style={{ fontSize: 11 }}>
-                {ROLE_DESCRIPTIONS[role] ?? `Role · ${role}`}
-              </Text>
-            ) : null}
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              {!isLoading && !isError && occPct != null ? `${occPct}% rooms occupied.` : null}{' '}
-              {!isLoading && arrToday != null ? `${arrToday} arrivals scheduled today.` : null}{' '}
-              {!isLoading && dirty != null && cleaning != null
-                ? `${dirty + cleaning + inspecting} rooms in housekeeping`
-                : null}{' '}
-              {isError ? 'Numbers could not be loaded.' : ''}
-            </Text>
-          </Flex>
-        </Spin>
-      </Card>
+  const showAny =
+    showHousekeeping || showMaintenance || showOccupancy || showArrivals || showDepartures || showRevenue;
 
-      <Card size="small" styles={{ body: { padding: 16 } }}>
-        <Text type="secondary" style={{ fontSize: 12, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-          Arrivals & departures
-        </Text>
-        <Row gutter={[12, 12]} style={{ marginTop: 12 }}>
-          <Col span={12}>
-            <div style={{ color: '#8b949e', fontSize: 11 }}>Expected arrivals</div>
-            <Title level={5} style={{ margin: '4px 0 0', color: '#e6edf3' }}>
-              {isLoading ? '-' : s?.arrivalsSoon ?? 0}
-            </Title>
-          </Col>
-          <Col span={12}>
-            <div style={{ color: '#8b949e', fontSize: 11 }}>Checkouts tomorrow</div>
-            <Title level={5} style={{ margin: '4px 0 0', color: '#e6edf3' }}>
-              {isLoading ? '-' : s?.departuresTomorrow ?? 0}
-            </Title>
-          </Col>
-          <Col span={12}>
-            <div style={{ color: '#8b949e', fontSize: 11 }}>Departures today</div>
-            <Title level={5} style={{ margin: '4px 0 0', color: '#e6edf3' }}>
-              {isLoading ? '-' : depToday ?? '-'}
-            </Title>
-          </Col>
-          <Col span={12}>
-            <div style={{ color: '#8b949e', fontSize: 11 }}>Booked revenue (estimate)</div>
-            <Title level={5} style={{ margin: '4px 0 0', color: '#79c0ff' }}>
+  if (!showAny) {
+    return null;
+  }
+
+  return (
+    <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {showHousekeeping ? (
+        <Panel title="Housekeeping status">
+          <Spin spinning={isLoading}>
+            <Flex vertical gap={12}>
+              <Row gutter={[8, 8]} style={{ width: '100%' }}>
+                <Col span={8}>
+                  <MetricTile value={isLoading ? '-' : attention} label="Attention" hint="Dirty + OOO" color={propizy.alert} />
+                </Col>
+                <Col span={8}>
+                  <MetricTile value={isLoading ? '-' : vacant} label="Ready" hint="Vacant" color={propizy.success} />
+                </Col>
+                <Col span={8}>
+                  <MetricTile value={isLoading ? '-' : holdPipeline} label="In flight" hint="Cleaning" color={propizy.muted} />
+                </Col>
+              </Row>
+              <Text style={{ fontSize: 12, color: propizy.muted, lineHeight: 1.5 }}>
+                {isError
+                  ? 'Numbers could not be loaded.'
+                  : !isLoading
+                    ? `${dirty + cleaning + inspecting} rooms in housekeeping.`
+                    : null}
+              </Text>
+            </Flex>
+          </Spin>
+        </Panel>
+      ) : null}
+
+      {showMaintenance && !showHousekeeping ? (
+        <Panel title="Engineering status">
+          <Spin spinning={isLoading}>
+            <Flex vertical gap={12}>
+              <Row gutter={[8, 8]} style={{ width: '100%' }}>
+                <Col span={12}>
+                  <MetricTile
+                    value={isLoading ? '-' : maintenance}
+                    label="Maintenance"
+                    hint="Off market"
+                    color={propizy.caution}
+                  />
+                </Col>
+                {showOccupancy ? (
+                  <Col span={12}>
+                    <MetricTile value={isLoading ? '-' : vacant} label="Vacant" hint="Available" color={propizy.success} />
+                  </Col>
+                ) : null}
+              </Row>
+              <Text style={{ fontSize: 12, color: propizy.muted, lineHeight: 1.5 }}>
+                {isError
+                  ? 'Numbers could not be loaded.'
+                  : !isLoading
+                    ? `${maintenance} maintenance hold${maintenance !== 1 ? 's' : ''}.`
+                    : null}
+              </Text>
+            </Flex>
+          </Spin>
+        </Panel>
+      ) : null}
+
+      {showOccupancy && !showHousekeeping && !showMaintenance ? (
+        <Panel title="Occupancy">
+          <Spin spinning={isLoading}>
+            <Flex vertical gap={12}>
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: '50%',
+                  border: `2px solid ${trendNeutral ? 'rgba(47,143,87,0.45)' : 'rgba(201,68,74,0.45)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: trendNeutral ? propizy.success : propizy.alert,
+                  background: trendNeutral ? 'rgba(47,143,87,0.08)' : 'rgba(201,68,74,0.08)',
+                }}
+              >
+                {trendNeutral ? <ArrowUpOutlined style={{ fontSize: 18 }} /> : <ArrowDownOutlined style={{ fontSize: 18 }} />}
+              </div>
+              <Row gutter={[8, 8]} style={{ width: '100%' }}>
+                <Col span={12}>
+                  <MetricTile value={isLoading ? '-' : occupied} label="Occupied" hint={`${total} total`} color={propizy.primary} />
+                </Col>
+                <Col span={12}>
+                  <MetricTile value={isLoading ? '-' : vacant} label="Vacant" hint="Ready" color={propizy.success} />
+                </Col>
+              </Row>
+              <Text style={{ fontSize: 12, color: propizy.muted, lineHeight: 1.5 }}>
+                {isError
+                  ? 'Numbers could not be loaded.'
+                  : !isLoading && occPct != null
+                    ? `${occPct}% rooms occupied.`
+                    : null}
+              </Text>
+            </Flex>
+          </Spin>
+        </Panel>
+      ) : null}
+
+      {showArrivals || showDepartures ? (
+        <Panel title="Arrivals & departures">
+          <Spin spinning={isLoading}>
+            <Row gutter={[12, 12]}>
+              {showArrivals ? (
+                <Col span={12}>
+                  <div style={{ color: propizy.muted, fontSize: 11 }}>Expected arrivals</div>
+                  <Title level={5} style={{ margin: '4px 0 0', color: propizy.text }}>
+                    {isLoading ? '-' : s?.arrivalsSoon ?? 0}
+                  </Title>
+                </Col>
+              ) : null}
+              {showDepartures ? (
+                <Col span={12}>
+                  <div style={{ color: propizy.muted, fontSize: 11 }}>Checkouts tomorrow</div>
+                  <Title level={5} style={{ margin: '4px 0 0', color: propizy.text }}>
+                    {isLoading ? '-' : s?.departuresTomorrow ?? 0}
+                  </Title>
+                </Col>
+              ) : null}
+              {showArrivals ? (
+                <Col span={12}>
+                  <div style={{ color: propizy.muted, fontSize: 11 }}>Arrivals today</div>
+                  <Title level={5} style={{ margin: '4px 0 0', color: propizy.text }}>
+                    {isLoading ? '-' : arrToday ?? '-'}
+                  </Title>
+                </Col>
+              ) : null}
+              {showDepartures ? (
+                <Col span={12}>
+                  <div style={{ color: propizy.muted, fontSize: 11 }}>Departures today</div>
+                  <Title level={5} style={{ margin: '4px 0 0', color: propizy.text }}>
+                    {isLoading ? '-' : depToday ?? '-'}
+                  </Title>
+                </Col>
+              ) : null}
+            </Row>
+          </Spin>
+        </Panel>
+      ) : null}
+
+      {showRevenue ? (
+        <Panel title="Financial snapshot">
+          <Spin spinning={isLoading}>
+            <div style={{ color: propizy.muted, fontSize: 11 }}>Booked revenue</div>
+            <Title level={5} style={{ margin: '4px 0 0', color: propizy.primary }}>
               {isLoading ? '-' : `$${Math.round(Number(s?.revenuePipeline ?? 0)).toLocaleString()}`}
             </Title>
-          </Col>
-        </Row>
-      </Card>
+            {showOccupancy && occPct != null && !isLoading ? (
+              <Text style={{ fontSize: 12, color: propizy.muted, display: 'block', marginTop: 8 }}>
+                {occPct}% occupancy
+              </Text>
+            ) : null}
+          </Spin>
+        </Panel>
+      ) : null}
     </div>
   );
 }

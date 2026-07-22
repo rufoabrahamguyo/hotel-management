@@ -1,0 +1,167 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-activity-checkin" name="Activity — Check In Guest (Fig 6.14 swimlanes)">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Figure 6.14 style: Activity Diagram — Check In Guest (Hotel PMS)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="180" y="8" width="640" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- Swimlane grid: columns = Front Desk | System; rows = Receptionist | Back Office -->
+        <mxCell id="lane-grid" value="" style="swimlane;startSize=0;horizontal=0;fillColor=none;strokeColor=#333333;fontStyle=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="44" width="920" height="640" as="geometry" />
+        </mxCell>
+
+        <!-- Column headers -->
+        <mxCell id="col-front" value="Front Desk" style="swimlane;startSize=24;horizontal=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="lane-grid">
+          <mxGeometry x="0" y="0" width="460" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="col-system" value="Hotel PMS System" style="swimlane;startSize=24;horizontal=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="lane-grid">
+          <mxGeometry x="460" y="0" width="460" height="640" as="geometry" />
+        </mxCell>
+
+        <!-- Row: Receptionist (top half of each column) -->
+        <mxCell id="row-rec-front" value="Receptionist" style="swimlane;startSize=24;horizontal=1;fillColor=#fafafa;strokeColor=#cccccc;fontStyle=2;fontSize=10;" vertex="1" parent="col-front">
+          <mxGeometry x="0" y="0" width="460" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="row-rec-sys" value="Receptionist" style="swimlane;startSize=24;horizontal=1;fillColor=#fafafa;strokeColor=#cccccc;fontStyle=2;fontSize=10;" vertex="1" parent="col-system">
+          <mxGeometry x="0" y="0" width="460" height="320" as="geometry" />
+        </mxCell>
+
+        <!-- Row: Back Office (bottom half) -->
+        <mxCell id="row-bo-front" value="Back Office" style="swimlane;startSize=24;horizontal=1;fillColor=#fafafa;strokeColor=#cccccc;fontStyle=2;fontSize=10;" vertex="1" parent="col-front">
+          <mxGeometry x="0" y="320" width="460" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="row-bo-sys" value="Back Office" style="swimlane;startSize=24;horizontal=1;fillColor=#fafafa;strokeColor=#cccccc;fontStyle=2;fontSize=10;" vertex="1" parent="col-system">
+          <mxGeometry x="0" y="320" width="460" height="320" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ACTIVITY ELEMENTS ========== -->
+
+        <!-- Initial node (Receptionist / Front Desk) -->
+        <mxCell id="init" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=none;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="60" y="60" width="24" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-select" value="Select reservation&#xa;or walk-in guest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="120" y="50" width="160" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Decision: reservation exists? -->
+        <mxCell id="dec-res" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="160" y="120" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl-res-yes" value="[reservation found]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="210" y="125" width="110" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl-res-no" value="[no reservation]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="100" y="170" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-register" value="Register guest&#xa;(walk-in)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="40" y="200" width="120" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Merge node -->
+        <mxCell id="merge1" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="300" y="120" width="40" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-confirm" value="Confirm check-in&#xa;details with guest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="row-rec-front">
+          <mxGeometry x="260" y="50" width="150" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- System side: authenticate -->
+        <mxCell id="act-auth" value="Authenticate user&#xa;(JWT session)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="row-rec-sys">
+          <mxGeometry x="80" y="50" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Decision: room available? -->
+        <mxCell id="dec-room" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="180" y="50" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl-room-yes" value="[room available]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="230" y="55" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl-room-no" value="[room conflict]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="60" y="100" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-notify" value="Notify receptionist&#xa;of impossibility" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="60" y="130" width="150" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Fork -->
+        <mxCell id="fork" value="" style="line;strokeWidth=4;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="300" y="48" width="8" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-update-res" value="Update reservation&#xa;status → checked_in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="340" y="40" width="150" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-update-room" value="Update room status&#xa;→ occupied" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="340" y="100" width="150" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Join -->
+        <mxCell id="join" value="" style="line;strokeWidth=4;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="row-bo-sys">
+          <mxGeometry x="300" y="180" width="8" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act-complete" value="Display check-in&#xa;confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="260" y="200" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Merge for rejected path -->
+        <mxCell id="merge2" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="300" y="260" width="40" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Activity final -->
+        <mxCell id="final" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;strokeWidth=2;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="308" y="320" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="final-inner" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="314" y="326" width="12" height="12" as="geometry" />
+        </mxCell>
+
+        <!-- Flow final (rejected path only) -->
+        <mxCell id="flow-final" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="100" y="200" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-final-x" value="X" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=14;" vertex="1" parent="row-bo-front">
+          <mxGeometry x="100" y="198" width="20" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ========== CONTROL FLOWS ========== -->
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="init" target="act-select"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-select" target="dec-res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="dec-res" target="act-register"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-register" target="merge1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="dec-res" target="merge1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="merge1" target="act-confirm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-confirm" target="act-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-auth" target="dec-room"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="dec-room" target="act-notify"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-notify" target="flow-final"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="dec-room" target="fork"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="fork" target="act-update-res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="fork" target="act-update-room"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-update-res" target="join"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-update-room" target="join"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="join" target="act-complete"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="act-complete" target="merge2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="merge2" target="final"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="&lt;b&gt;Activity elements (Ch. 6)&lt;/b&gt;&lt;br&gt;● Initial node&amp;nbsp;&amp;nbsp;◎ Activity final (terminates all tokens)&amp;nbsp;&amp;nbsp;⊗ Flow final (terminates one branch)&lt;br&gt;◇ Decision / merge&amp;nbsp;&amp;nbsp;║ Fork / join (parallel synchronisation)&lt;br&gt;Swimlanes assign responsibility: Front Desk vs System, Receptionist vs Back Office" style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="720" height="60" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

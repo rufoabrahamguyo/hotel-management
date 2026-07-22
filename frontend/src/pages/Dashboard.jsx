@@ -5,279 +5,66 @@ import {
   Input,
   Select,
   Space,
-  Card,
-  Tag,
   Alert,
   Grid,
-  Dropdown,
+  Skeleton,
 } from 'antd';
 import {
   SearchOutlined,
-  PlusOutlined,
-  MoreOutlined,
   CheckCircleOutlined,
   WarningOutlined,
   ClockCircleOutlined,
   ReloadOutlined,
+  ArrowRightOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authstore';
-import { normalizeRole, ROLE_DESCRIPTIONS, ROLE } from '../auth/roles';
+import { normalizeRole } from '../auth/roles';
 import { useOpsSummary } from '../hooks/useOpsSummary';
 import SummaryRail from '../layout/SummaryRail';
+import { propizy } from '../layout/propizyTokens';
+import { pageWrapStyle } from '../layout/pageStyles';
+import { buildRealtimeCards } from './dashboardMetricCards';
+import { resolveOverviewTitle } from './dashboardStrategies';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 const SORT_OPTS = [
   { value: 'priority', label: 'Needs attention first' },
-  { value: 'name', label: 'Title A-Z' },
+  { value: 'name', label: 'Title A–Z' },
 ];
 
-function fmtUsd(n) {
-  return Number(n ?? 0).toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 0 });
-}
-
-/** @returns {'frontdesk'|'housekeeping'|'maintenance'|'finance'|'executive'} */
-function dashboardFocus(normalizedRole) {
-  switch (normalizedRole) {
-    case ROLE.HOUSEKEEPING_MANAGER:
-    case ROLE.HOUSEKEEPING:
-      return 'housekeeping';
-    case ROLE.REVENUE_MANAGER:
-    case ROLE.ACCOUNTANT:
-      return 'finance';
-    case ROLE.MAINTENANCE_MANAGER:
-    case ROLE.MAINTENANCE:
-      return 'maintenance';
-    case ROLE.FRONT_OFFICE_MANAGER:
-    case ROLE.RECEPTIONIST:
-      return 'frontdesk';
-    default:
-      return 'executive';
-  }
-}
-
-function overviewTitle(focus, normalizedRoleLabel) {
-  switch (focus) {
-    case 'frontdesk':
-      return 'Front desk pulse';
-    case 'housekeeping':
-      return 'Housekeeping workload';
-    case 'maintenance':
-      return 'Engineering & room holds';
-    case 'finance':
-      return 'Revenue & occupancy';
-    default:
-      return normalizedRoleLabel &&
-        (normalizedRoleLabel.includes('Manager') || normalizedRoleLabel === ROLE.SYSTEM_ADMIN || normalizedRoleLabel === ROLE.GENERAL_MANAGER)
-        ? 'Property snapshot'
-        : 'Operations overview';
-  }
-}
-
-/** @param emphasis {'good'|'caution'|'alert'|'neutral'} */
 function statusIcon(kind) {
-  if (kind === 'good')
-    return <CheckCircleOutlined style={{ color: '#3fb950', fontSize: 22 }} />;
-  if (kind === 'caution')
-    return <WarningOutlined style={{ color: '#d29922', fontSize: 22 }} />;
-  if (kind === 'alert')
-    return <ClockCircleOutlined style={{ color: '#f85149', fontSize: 22 }} />;
-  return <CheckCircleOutlined style={{ color: '#58a6ff', fontSize: 22 }} />;
+  if (kind === 'good') return <CheckCircleOutlined style={{ color: propizy.success, fontSize: 20 }} />;
+  if (kind === 'caution') return <WarningOutlined style={{ color: propizy.caution, fontSize: 20 }} />;
+  if (kind === 'alert') return <ClockCircleOutlined style={{ color: propizy.alert, fontSize: 20 }} />;
+  return <CheckCircleOutlined style={{ color: propizy.info, fontSize: 20 }} />;
 }
 
-/** @typedef {{ key: string, title: string, subtitle: string, detail: string, metric: string, emphasis: 'good'|'caution'|'alert'|'neutral', navigate: string }} CardRow */
+function metricColor(e) {
+  if (e === 'good') return propizy.success;
+  if (e === 'caution') return propizy.caution;
+  if (e === 'alert') return propizy.alert;
+  return propizy.primary;
+}
 
-/** @returns {CardRow[]} */
-function buildRealtimeCards(focus, raw) {
-  const s = raw ?? {};
-  const totalRooms = Number(s.totalRooms) || 0;
-  const vacant = Number(s.vacantRooms) || 0;
-  const occupied = Number(s.occupiedRooms) || 0;
-  const dirty = Number(s.dirtyRooms) || 0;
-  const cleaning = Number(s.cleaningRooms) || 0;
-  const inspecting = Number(s.inspectingRooms) || 0;
-  const maintenance = Number(s.maintenanceRooms) || 0;
-  const turnover = Number(s.turnoverRooms) || dirty + cleaning + inspecting;
-  const occPct = totalRooms ? ((occupied / totalRooms) * 100).toFixed(1) : '0';
-  const inHouse = Number(s.inHouseGuests) || 0;
-  const arrToday = Number(s.arrivalsDueToday) || 0;
-  const depToday = Number(s.departuresDueToday) || 0;
-  const upcoming = Number(s.upcomingBookings) || 0;
-  const revenue = Number(s.revenuePipeline) || 0;
-
-  const availEmphasis =
-    vacant === 0 ? 'alert' : vacant < Math.ceil(totalRooms * 0.12) ? 'caution' : 'good';
-
-  /** @type {CardRow[]} */
-  const frontdesk = [
-    {
-      key: 'avail',
-      title: 'Rooms available to assign',
-      subtitle: `Vacant & ready (${vacant} of ${totalRooms} rooms)`,
-      detail: `${occPct}% of rooms occupied. Manage assignments under Rooms.`,
-      metric: vacant.toString(),
-      emphasis: availEmphasis,
-      navigate: '/rooms',
-    },
-    {
-      key: 'inhouse',
-      title: 'In-house stays',
-      subtitle: `${inHouse} guests checked in`,
-      detail: `${depToday} checkout${depToday !== 1 ? 's' : ''} scheduled for today`,
-      metric: String(inHouse),
-      emphasis: depToday > inHouse ? 'neutral' : 'neutral',
-      navigate: '/guests',
-    },
-    {
-      key: 'arr',
-      title: 'Arrivals today',
-      subtitle: 'Upcoming or already on the books for this calendar day',
-      detail: `${arrToday} for today · ${upcoming} upcoming overall`,
-      metric: String(arrToday),
-      emphasis: arrToday > 8 ? 'caution' : 'good',
-      navigate: '/guests',
-    },
-    {
-      key: 'dep',
-      title: 'Departures today',
-      subtitle: 'Guests departing today',
-      detail: `${turnover} room${turnover !== 1 ? 's' : ''} being turned (dirty, clean, ready)`,
-      metric: String(depToday),
-      emphasis: turnover > vacant ? 'caution' : 'good',
-      navigate: '/guests',
-    },
-    {
-      key: 'maint',
-      title: 'Rooms off market',
-      subtitle: 'Maintenance holds cannot be assigned',
-      detail: `${maintenance} room${maintenance !== 1 ? 's' : ''} flagged maintenance`,
-      metric: String(maintenance),
-      emphasis: maintenance > 0 ? 'caution' : 'good',
-      navigate: '/rooms',
-    },
-  ];
-
-  const housekeeping = [
-    {
-      key: 'dirty',
-      title: 'Dirty queue',
-      subtitle: 'Rooms waiting for housekeeping',
-      detail: `${occupied} rooms with guests · ${turnover} in turnaround`,
-      metric: String(dirty),
-      emphasis: dirty > Math.ceil(totalRooms * 0.2) ? 'caution' : dirty > 0 ? 'neutral' : 'good',
-      navigate: '/rooms',
-    },
-    {
-      key: 'cleaning',
-      title: 'In progress',
-      subtitle: `Cleaning (${cleaning}) + inspection (${inspecting})`,
-      detail: `${vacant} vacant and ready to sell`,
-      metric: String(cleaning + inspecting),
-      emphasis: cleaning + inspecting > 6 ? 'caution' : 'neutral',
-      navigate: '/rooms',
-    },
-    {
-      key: 'vac',
-      title: 'Rooms ready for guests',
-      subtitle: `Vacant and cleared (${vacant} rooms)`,
-      metric: String(vacant),
-      emphasis: availEmphasis,
-      detail: `${maintenance} maintenance hold${maintenance !== 1 ? 's' : ''}`,
-      navigate: '/rooms',
-    },
-  ];
-
-  const maintenanceFocus = [
-    {
-      key: 'maint',
-      title: 'Rooms in maintenance',
-      subtitle: 'Out of order for repairs',
-      detail: `${dirty} dirty · ${vacant} vacant around the hotel`,
-      metric: String(maintenance),
-      emphasis: maintenance === 0 ? 'good' : 'caution',
-      navigate: '/rooms',
-    },
-    {
-      key: 'occ',
-      title: 'Hotel snapshot',
-      subtitle: `${occupied} occupied rooms · ${vacant} vacant`,
-      detail: `${inHouse} guests in house`,
-      metric: occupied.toString(),
-      emphasis: 'neutral',
-      navigate: '/reports',
-    },
-  ];
-
-  const finance = [
-    {
-      key: 'rev',
-      title: 'Booked revenue (estimate)',
-      subtitle: 'Totals on active and upcoming stays',
-      detail: fmtUsd(revenue),
-      metric: fmtUsd(revenue),
-      emphasis: revenue <= 0 ? 'caution' : 'neutral',
-      navigate: '/reports',
-    },
-    {
-      key: 'occPct',
-      title: 'Rooms occupied',
-      subtitle: `${occPct}% of rooms show occupied`,
-      detail: `${inHouse} guests checked in`,
-      metric: `${occPct}%`,
-      emphasis: Number(occPct) > 90 ? 'caution' : 'neutral',
-      navigate: '/reports',
-    },
-    {
-      key: 'book',
-      title: 'Upcoming reservations',
-      subtitle: `${upcoming} bookings not checked in yet`,
-      detail: `${arrToday} arrivals today`,
-      metric: String(upcoming),
-      emphasis: 'neutral',
-      navigate: '/guests',
-    },
-  ];
-
-  const executive = [
-    frontdesk[0],
-    frontdesk[1],
-    frontdesk[2],
-    frontdesk[3],
-    {
-      key: 'turn',
-      title: 'Rooms in turnaround',
-      subtitle: `${turnover} rooms moving from dirty to clean to ready`,
-      detail: `${cleaning} cleaning · ${inspecting} inspecting (${dirty} dirty)`,
-      metric: String(turnover),
-      emphasis: turnover > vacant ? 'caution' : 'neutral',
-      navigate: '/rooms',
-    },
-    finance[0],
-  ];
-
-  switch (focus) {
-    case 'frontdesk':
-      return frontdesk;
-    case 'housekeeping':
-      return housekeeping;
-    case 'maintenance':
-      return maintenanceFocus;
-    case 'finance':
-      return finance;
-    default:
-      return executive.slice(0, 6);
-  }
+function emphasisBorder(e) {
+  if (e === 'good') return 'rgba(47, 143, 87, 0.35)';
+  if (e === 'caution') return 'rgba(196, 138, 26, 0.4)';
+  if (e === 'alert') return 'rgba(201, 68, 74, 0.4)';
+  return propizy.border;
 }
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
+  const properties = useAuthStore((s) => s.properties);
+  const propertyId = useAuthStore((s) => s.propertyId);
   const role = normalizeRole(user?.role);
-  const focus = role ? dashboardFocus(role) : 'executive';
   const deniedToast = useRef(false);
+  const currentProperty = properties.find((p) => p.id === propertyId);
 
   const { data: summary, isLoading, isFetching, isError, error, refetch } = useOpsSummary();
 
@@ -297,17 +84,19 @@ export default function Dashboard() {
     }
   }, [location.state]);
 
+  const summaryFailed =
+    !isLoading && isError && error?.response?.status !== 403;
+
   useEffect(() => {
-    if (!isError) return;
-    const msg =
-      error?.response?.data?.message || error?.message || 'Could not load the overview.';
+    if (!summaryFailed) return;
+    const msg = error?.response?.data?.message || error?.message || 'Could not load the overview.';
     toast.error(msg, { id: 'ops-summary-error' });
-  }, [isError, error]);
+  }, [summaryFailed, error]);
 
   const monitors = useMemo(() => {
     if (!role) return [];
-    return buildRealtimeCards(focus, summary);
-  }, [focus, summary, role]);
+    return buildRealtimeCards(role, summary);
+  }, [role, summary]);
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -321,77 +110,55 @@ export default function Dashboard() {
     return list;
   }, [monitors, q, sort]);
 
-  const metricColor = (e) =>
-    e === 'good'
-      ? '#3fb950'
-      : e === 'caution'
-        ? '#d29922'
-        : e === 'alert'
-          ? '#ff7b72'
-          : '#79c0ff';
-
-  const newHref =
-    focus === 'housekeeping'
-      ? '/rooms'
-      : focus === 'finance'
-        ? '/reports'
-        : '/guests';
-
-  const pageTitle = overviewTitle(focus, role);
+  const pageTitle = role ? resolveOverviewTitle(role) : 'Operations overview';
 
   return (
-    <div style={{ padding: '24px clamp(18px, 3vw, 32px)', minHeight: '100%', color: '#e6edf3' }}>
+    <div style={pageWrapStyle}>
       {!role ? (
         <Alert
           type="warning"
           showIcon
-          style={{ marginBottom: 24, background: '#211c12', borderColor: '#59400a', color: '#e6edf3' }}
+          style={{ marginBottom: 24, borderRadius: 12 }}
           message="No role on this account"
           description="Ask your administrator to assign a role to this account."
         />
       ) : null}
 
-      <div style={{ marginBottom: 22, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 14 }}>
-        <div style={{ flex: '1 1 260px', minWidth: 0 }}>
-          <Title level={2} style={{ margin: '0 0 6px', color: '#e6edf3', fontWeight: 650 }}>
-            {pageTitle}
-          </Title>
-          <Paragraph type="secondary" style={{ marginBottom: 0, color: '#8b949e' }}>
-            {user?.name ? (
-              <>
-                Signed in as <Text strong style={{ color: '#e6edf3' }}>{user.name}</Text>
-                {role ? (
-                  <>
-                    {' '}
-                    · <Tag bordered={false} style={{ background: '#21262d', color: '#79c0ff' }}>{role}</Tag>
-                  </>
-                ) : null}
-              </>
-            ) : (
-              'Signed in.'
-            )}
-          </Paragraph>
-          {role && ROLE_DESCRIPTIONS[role] ? (
-            <Text type="secondary" style={{ fontSize: 13, display: 'block', marginTop: 6 }}>
-              {ROLE_DESCRIPTIONS[role]}
+      <div
+        style={{
+          marginBottom: 28,
+          padding: '22px 24px',
+          borderRadius: 16,
+          background: propizy.navy,
+          color: '#f4f6f8',
+          boxShadow: '0 12px 32px rgba(12, 24, 41, 0.18)',
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-end' }}>
+          <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+            <Text style={{ color: 'rgba(244,246,248,0.65)', fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              {currentProperty?.name || 'Hotely'}
             </Text>
-          ) : null}
-        </div>
-        <Space wrap>
-          <Button icon={<ReloadOutlined />} loading={isFetching} onClick={() => refetch()}>
+            <Title level={2} style={{ margin: '8px 0 0', color: '#fff', fontWeight: 700, letterSpacing: '-0.03em' }}>
+              {pageTitle}
+            </Title>
+          </div>
+          <Button
+            icon={<ReloadOutlined />}
+            loading={isFetching}
+            onClick={() => refetch()}
+            style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)', color: '#fff' }}
+          >
             Refresh
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate(newHref)} style={{ fontWeight: 600 }}>
-            New
-          </Button>
-        </Space>
+        </div>
       </div>
 
-      {!isLoading && isError ? (
+      {summaryFailed ? (
         <Alert
           type="error"
           showIcon
-          style={{ marginBottom: 18, background: '#281018', borderColor: '#5a1f2f', color: '#e6edf3' }}
+          style={{ marginBottom: 18, borderRadius: 12 }}
           message="Live stats unavailable"
           description={
             error?.response?.data?.message ||
@@ -401,121 +168,147 @@ export default function Dashboard() {
         />
       ) : null}
 
-      <Card
-        size="small"
-        styles={{
-          header: {
-            padding: '10px 16px',
-            borderBottom: '1px solid #21262d',
-            background: '#12181f',
-            color: '#e6edf3',
-          },
-          body: { padding: 16, background: '#0d1117' },
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 12,
+          alignItems: 'center',
+          marginBottom: 16,
+          justifyContent: 'space-between',
         }}
-        variant="borderless"
-        title={
-          <Space wrap split={<span style={{ color: '#30363d' }}>|</span>}>
-            <Text type="secondary" style={{ maxWidth: 420 }}>
-              {role ? 'Shown for your role. Search to narrow the list.' : 'Sign in needs a staff role to show details.'}
-            </Text>
-            <Input
-              allowClear
-              placeholder="Filter rows…"
-              prefix={<SearchOutlined style={{ color: '#6e7681' }} />}
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              style={{ width: screens.md ? 280 : '100%', maxWidth: 360, background: '#0d1117' }}
-              size="middle"
-            />
-            <Select
-              popupMatchSelectWidth={false}
-              value={sort}
-              onChange={setSort}
-              options={SORT_OPTS}
-              size="small"
-              variant="filled"
-              style={{ minWidth: 160 }}
-            />
-          </Space>
-        }
       >
-        <Space direction="vertical" size={12} style={{ width: '100%' }}>
-          {isLoading && !filtered.length ? (
-            <Card size="small" variant="borderless" styles={{ body: { padding: 32, background: '#161b22' } }}>
-              <Text style={{ color: '#8b949e' }}>Loading…</Text>
-            </Card>
-          ) : null}
-          {filtered.map((m) => (
-            <Card
-              key={m.key}
-              size="small"
-              variant="borderless"
-              hoverable={false}
-              styles={{
-                body: {
-                  padding: '14px 16px',
-                  background: '#161b22',
-                  borderRadius: 8,
-                  border: '1px solid #21262d',
-                  transition: 'border-color .15s',
-                },
-              }}
-              style={{ cursor: 'default' }}
-            >
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: '1 1 200px', minWidth: 0 }}>
-                  {statusIcon(m.emphasis)}
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, color: '#e6edf3', fontSize: 15 }}>{m.title}</div>
-                    <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
-                      {m.subtitle}
-                    </Text>
-                    <Text type="secondary" style={{ fontSize: 13, marginTop: 4, display: 'block' }}>
-                      {m.detail}
-                    </Text>
-                  </div>
-                </div>
+        <div>
+          <Title level={4} style={{ margin: 0, color: propizy.text, fontWeight: 700 }}>
+            Live metrics
+          </Title>
+          <Text type="secondary" style={{ fontSize: 13 }}>
+            {role ? `Tailored for ${role}` : 'Assign a role to see details'}
+            {isFetching ? ' · Updating…' : ''}
+          </Text>
+        </div>
+        <Space wrap>
+          <Input
+            allowClear
+            placeholder="Filter metrics…"
+            prefix={<SearchOutlined style={{ color: propizy.muted }} />}
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            style={{ width: screens.md ? 220 : '100%', maxWidth: 280, borderRadius: 10 }}
+          />
+          <Select
+            popupMatchSelectWidth={false}
+            value={sort}
+            onChange={setSort}
+            options={SORT_OPTS}
+            style={{ minWidth: 170 }}
+          />
+        </Space>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: 14,
+        }}
+      >
+        {isLoading && !filtered.length
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  background: propizy.surface,
+                  borderRadius: 14,
+                  padding: 18,
+                  border: `1px solid ${propizy.border}`,
+                }}
+              >
+                <Skeleton active paragraph={{ rows: 2 }} />
+              </div>
+            ))
+          : null}
+
+        {filtered.map((m) => (
+          <button
+            key={m.key}
+            type="button"
+            onClick={() => navigate(m.navigate)}
+            style={{
+              textAlign: 'left',
+              cursor: 'pointer',
+              background: propizy.surface,
+              borderRadius: 14,
+              padding: '18px 18px 16px',
+              border: `1px solid ${emphasisBorder(m.emphasis)}`,
+              boxShadow: '0 2px 8px rgba(12, 24, 41, 0.04)',
+              transition: 'transform .15s ease, box-shadow .15s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+              font: 'inherit',
+              color: 'inherit',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 10px 24px rgba(12, 24, 41, 0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'none';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(12, 24, 41, 0.04)';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                 <div
                   style={{
-                    minWidth: 120,
-                    textAlign: 'right',
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    background: propizy.bg,
+                    display: 'grid',
+                    placeItems: 'center',
+                    flexShrink: 0,
                   }}
                 >
-                  <div
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 700,
-                      lineHeight: 1.15,
-                      color: metricColor(m.emphasis),
-                      fontVariantNumeric: 'tabular-nums',
-                    }}
-                  >
-                    {m.metric}
-                  </div>
-                  <Text type="secondary" style={{ fontSize: 11, display: 'block', marginTop: 6 }}>
-                    {isFetching ? 'Updating…' : 'Pull Refresh to reload'}
+                  {statusIcon(m.emphasis)}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, color: propizy.text, fontSize: 14 }}>{m.title}</div>
+                  <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
+                    {m.subtitle}
                   </Text>
                 </div>
-                <Dropdown
-                  placement="bottomRight"
-                  trigger={['click']}
-                  menu={{
-                    items: [{ key: 'open', label: 'Open related workspace', onClick: () => navigate(m.navigate) }],
-                  }}
-                >
-                  <Button type="text" icon={<MoreOutlined />} style={{ color: '#8b949e', marginLeft: 'auto' }} />
-                </Dropdown>
               </div>
-            </Card>
-          ))}
-          {!filtered.length && !isLoading ? (
-            <Text type="secondary">No KPI rows matched your filters.</Text>
-          ) : null}
-        </Space>
-      </Card>
+              <ArrowRightOutlined style={{ color: propizy.muted, fontSize: 12, marginTop: 4 }} />
+            </div>
+            <div
+              style={{
+                fontSize: 30,
+                fontWeight: 750,
+                lineHeight: 1.1,
+                color: metricColor(m.emphasis),
+                fontVariantNumeric: 'tabular-nums',
+                letterSpacing: '-0.03em',
+              }}
+            >
+              {m.metric}
+            </div>
+            <Text type="secondary" style={{ fontSize: 12, lineHeight: 1.45 }}>
+              {m.detail}
+            </Text>
+          </button>
+        ))}
+      </div>
+
+      {!filtered.length && !isLoading ? (
+        <Text type="secondary" style={{ display: 'block', marginTop: 16 }}>
+          No metrics matched your filters.
+        </Text>
+      ) : null}
 
       {compactRail ? (
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: 28 }}>
           <SummaryRail user={user} />
         </div>
       ) : null}

@@ -8,6 +8,7 @@
     "dev:backend": "npm run dev --prefix backend",
     "build": "npm run build --prefix frontend",
     "lint": "npm run lint --prefix frontend",
+    "test": "npm test --prefix frontend && npm test --prefix backend",
     "preview": "npm run preview --prefix frontend",
     "backend:start": "npm start --prefix backend",
     "backend:init-db": "npm run init-db --prefix backend",
@@ -15,6 +16,7 @@
     "docker:up:detached": "docker compose up --build -d",
     "docker:down": "docker compose down",
     "docker:migrate-db": "docker compose exec -T postgres psql -U hotel -d hotel < backend/db/migrate_legacy_roles.sql",
-    "docker:migrate-pms": "docker compose exec -T postgres psql -U hotel -d hotel < backend/db/migrate_pms_tables.sql"
+    "docker:migrate-pms": "docker compose exec -T postgres psql -U hotel -d hotel < backend/db/migrate_pms_tables.sql",
+    "docker:migrate-multitenant": "docker compose exec -T postgres psql -U hotel -d hotel < backend/db/migrate_multitenant.sql"
   }
 }

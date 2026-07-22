@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { ConfigProvider, Layout, Grid, Drawer, Button } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { ConfigProvider, Layout, Grid, Drawer, Button, Typography } from 'antd';
+import { MenuOutlined, BankOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../store/authstore';
 import { getSidebarDefsForUser } from './sidebarNav';
 import { appShellTheme } from './appShellTheme';
+import { propizy } from './propizyTokens';
 import SummaryRail from './SummaryRail';
 import SidebarChrome from './SidebarChrome';
 
 const { Sider, Content, Header } = Layout;
+const { Text } = Typography;
 
 export default function AppShellLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -20,7 +22,11 @@ export default function AppShellLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
+  const properties = useAuthStore((s) => s.properties);
+  const propertyId = useAuthStore((s) => s.propertyId);
   const clearSession = useAuthStore((s) => s.clearSession);
+
+  const currentProperty = properties.find((p) => p.id === propertyId);
 
   const defs = useMemo(() => getSidebarDefsForUser(user), [user]);
 
@@ -46,11 +52,12 @@ export default function AppShellLayout() {
   const desktopSider = (
     <Sider
       trigger={null}
-      width={collapsed ? 80 : 244}
+      width={collapsed ? 80 : 248}
       style={{
-        background: '#151b24',
-        borderRight: '1px solid #21262d',
+        background: propizy.navy,
+        borderRight: 'none',
         overflow: 'hidden',
+        boxShadow: '4px 0 24px rgba(12, 24, 41, 0.08)',
       }}
     >
       <SidebarChrome
@@ -70,7 +77,7 @@ export default function AppShellLayout() {
 
   return (
     <ConfigProvider theme={appShellTheme}>
-      <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#0d1117' }}>
+      <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: propizy.bg }}>
         {isMobile ? (
           <Header
             style={{
@@ -78,23 +85,32 @@ export default function AppShellLayout() {
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              background: '#151b24',
-              borderBottom: '1px solid #21262d',
-              height: 52,
-              lineHeight: '52px',
+              background: propizy.surface,
+              borderBottom: `1px solid ${propizy.border}`,
+              height: 56,
+              lineHeight: '56px',
+              boxShadow: '0 1px 0 rgba(12, 24, 41, 0.04)',
             }}
           >
-            <Button type="text" icon={<MenuOutlined />} onClick={() => setMobileOpen(true)} style={{ color: '#e6edf3' }} />
-            <span style={{ fontWeight: 600, color: '#e6edf3' }}>Hotel PMS</span>
-            <span
-              style={{
-                marginLeft: 'auto',
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                background: '#3fb950',
-              }}
+            <Button
+              type="text"
+              icon={<MenuOutlined />}
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation menu"
+              style={{ color: propizy.text }}
             />
+            <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <SafetyCertificateOutlined style={{ color: propizy.gold, fontSize: 18 }} />
+              <div>
+                <div style={{ fontWeight: 700, color: propizy.text, lineHeight: 1.2, letterSpacing: '-0.02em' }}>Hotely</div>
+                {currentProperty ? (
+                  <Text type="secondary" style={{ fontSize: 11, lineHeight: 1.2 }} ellipsis>
+                    <BankOutlined style={{ marginRight: 4 }} />
+                    {currentProperty.name}
+                  </Text>
+                ) : null}
+              </div>
+            </div>
           </Header>
         ) : null}
 
@@ -103,8 +119,8 @@ export default function AppShellLayout() {
             display: 'flex',
             flexDirection: 'row',
             flex: 1,
-            minHeight: isMobile ? 'calc(100vh - 52px)' : 0,
-            background: '#0d1117',
+            minHeight: isMobile ? 'calc(100vh - 56px)' : 0,
+            background: propizy.bg,
           }}
         >
           {!isMobile ? desktopSider : null}
@@ -113,8 +129,13 @@ export default function AppShellLayout() {
             placement="left"
             open={isMobile && mobileOpen}
             onClose={() => setMobileOpen(false)}
-            styles={{ body: { padding: 0, background: '#151b24' } }}
-            width={276}
+            styles={{
+              body: {
+                padding: 0,
+                background: propizy.navy,
+              },
+            }}
+            width={280}
           >
             <SidebarChrome
               defs={defs}
@@ -133,7 +154,7 @@ export default function AppShellLayout() {
           <Layout
             style={{
               flex: 1,
-              background: '#0d1117',
+              background: propizy.bg,
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'row',
@@ -141,17 +162,17 @@ export default function AppShellLayout() {
               minWidth: 0,
             }}
           >
-            <Content style={{ overflow: 'auto', flex: showRightRail ? '1 1 auto' : 1, minWidth: 0, background: '#0d1117' }}>
+            <Content style={{ overflow: 'auto', flex: showRightRail ? '1 1 auto' : 1, minWidth: 0, background: propizy.bg }}>
               <Outlet />
             </Content>
 
             {showRightRail ? (
               <aside
                 style={{
-                  width: 296,
+                  width: 300,
                   flexShrink: 0,
-                  borderLeft: '1px solid #21262d',
-                  background: '#0d1117',
+                  borderLeft: `1px solid ${propizy.border}`,
+                  background: propizy.surface,
                   overflow: 'auto',
                 }}
               >

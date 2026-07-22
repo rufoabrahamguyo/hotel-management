@@ -1,3 +1,5 @@
+import { getAllowedSidebarPaths } from '../auth/permissions';
+
 /** Navigation entries (paths must match routers). Icons resolved in shell. */
 export const SIDEBAR_DEFS = [
   { path: '/dashboard', label: 'Overview', icon: 'dashboard' },
@@ -5,17 +7,12 @@ export const SIDEBAR_DEFS = [
   { path: '/rooms', label: 'Rooms', icon: 'rooms' },
   { path: '/reports', label: 'Reports', icon: 'reports' },
   { path: '/admin/staff', label: 'Staff accounts', icon: 'staff' },
+  { path: '/admin/properties', label: 'Properties', icon: 'properties' },
   { path: '/settings', label: 'Settings', icon: 'settings' },
 ];
 
-/** Every tab is shown for authenticated users with a role. */
+/** Sidebar items filtered by role — each role only sees workspaces they can access. */
 export function getSidebarDefsForUser(user) {
-  if (!hasRole(user)) {
-    return SIDEBAR_DEFS.filter((d) => d.path === '/dashboard');
-  }
-  return SIDEBAR_DEFS;
-}
-
-function hasRole(user) {
-  return user?.role != null && String(user.role).trim() !== '';
+  const allowed = new Set(getAllowedSidebarPaths(user));
+  return SIDEBAR_DEFS.filter((d) => allowed.has(d.path));
 }
