@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import { api } from '../../services/api';
 import { ROLE_DESCRIPTIONS, normalizeRole } from '../../auth/roles';
 import { useAuthStore } from '../../store/authstore';
+import { pageCardStyle, pageWrapStyle } from '../../layout/pageStyles';
 
 const { Title, Text } = Typography;
 
@@ -23,8 +24,13 @@ export default function ManageStaff() {
   const [creatableRoles, setCreatableRoles] = useState([]);
   const [rolesLoading, setRolesLoading] = useState(true);
   const [staff, setStaff] = useState([]);
+  const [assignableProperties, setAssignableProperties] = useState([]);
   const [form] = Form.useForm();
   const currentUserId = useAuthStore((s) => s.user?.id);
+  const sessionProperties = useAuthStore((s) => s.properties);
+  const propertyNameById = new Map(
+    [...sessionProperties, ...assignableProperties].map((p) => [p.id, p.name]),
+  );
 
   const loadCreatableRoles = useCallback(async () => {
     setRolesLoading(true);
@@ -51,6 +57,15 @@ export default function ManageStaff() {
     }
   }, []);
 
+  const loadAssignableProperties = useCallback(async () => {
+    try {
+      const { data } = await api.get('/auth/properties');
+      setAssignableProperties(data.properties ?? []);
+    } catch {
+      setAssignableProperties(sessionProperties);
+    }
+  }, [sessionProperties]);
+
   useEffect(() => {
     loadCreatableRoles();
   }, [loadCreatableRoles]);
@@ -58,6 +73,10 @@ export default function ManageStaff() {
   useEffect(() => {
     loadStaff();
   }, [loadStaff]);
+
+  useEffect(() => {
+    loadAssignableProperties();
+  }, [loadAssignableProperties]);
 
   const handleFinish = async (values) => {
     setLoading(true);
@@ -67,6 +86,7 @@ export default function ManageStaff() {
         role: values.role,
         username: values.username.trim().toLowerCase(),
         password: values.password,
+        property_ids: values.property_ids,
       });
       toast.success('Staff member created.');
       form.resetFields();
@@ -109,9 +129,9 @@ export default function ManageStaff() {
   const canSubmitForm = creatableRoles.length > 0 && !rolesLoading;
 
   return (
-    <div style={{ padding: '28px clamp(18px, 4vw, 40px)', maxWidth: 1000, margin: '0 auto', color: '#e6edf3' }}>
-      <Card style={{ marginBottom: 24, background: '#161b22', border: '1px solid #21262d' }} variant="borderless">
-        <Title level={3} style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 10, color: '#e6edf3' }}>
+    <div style={{ ...pageWrapStyle, maxWidth: 1000, margin: '0 auto' }}>
+      <Card style={{ marginBottom: 24, ...pageCardStyle }} variant="borderless">
+        <Title level={3} style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
           <TeamOutlined />
           Staff accounts
         </Title>
@@ -147,6 +167,18 @@ export default function ManageStaff() {
               width: 110,
               render: (s) =>
                 s === 'suspended' ? <Tag color="red">Suspended</Tag> : <Tag color="green">Active</Tag>,
+            },
+            {
+              title: 'Properties',
+              dataIndex: 'property_ids',
+              render: (ids) =>
+                !ids?.length ? (
+                  <Text type="secondary">All (org-wide)</Text>
+                ) : (
+                  ids.map((id) => (
+                    <Tag key={id}>{propertyNameById.get(id) ?? `#${id}`}</Tag>
+                  ))
+                ),
             },
             { title: 'Username', dataIndex: 'username' },
             { title: 'Email', dataIndex: 'email', render: (e) => e || '-' },
@@ -210,8 +242,8 @@ export default function ManageStaff() {
         />
       </Card>
 
-      <Card style={{ background: '#161b22', border: '1px solid #21262d' }} variant="borderless">
-        <Title level={5} style={{ color: '#e6edf3' }}>
+      <Card style={pageCardStyle} variant="borderless">
+        <Title level={5}>
           Add staff member
         </Title>
         {!canSubmitForm && !rolesLoading && (
@@ -241,6 +273,19 @@ export default function ManageStaff() {
                 value: r,
                 label: ROLE_DESCRIPTIONS[r] ? `${r} - ${ROLE_DESCRIPTIONS[r]}` : r,
               }))}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Properties"
+            name="property_ids"
+            rules={[{ required: true, message: 'Assign at least one property.' }]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select properties this person can work in"
+              disabled={!canSubmitForm}
+              options={assignableProperties.map((p) => ({ value: p.id, label: p.name }))}
             />
           </Form.Item>
 

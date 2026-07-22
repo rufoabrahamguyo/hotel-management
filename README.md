@@ -1,4 +1,4 @@
-# Hotel PMS
+# Hotel PMS (Hotely)
 
 Web-based **property management** workspace for a single hotel: staff sign in, see an operations overview, manage **guests and reservations**, **rooms and housekeeping status**, **reports**, **property settings**, and **staff accounts**. 
 
@@ -17,13 +17,19 @@ Web-based **property management** workspace for a single hotel: staff sign in, s
 
 ## Roles 
 
-The product is built around a **SystemAdmin → General Manager → department managers → line staff** model. Typical mapping:
+- Node.js 20+ (or current LTS)
+- npm
+- Docker and Docker Compose (recommended for Postgres + API)
+- Or a local PostgreSQL 16 instance if you run the API outside Docker
 
-| Who | Typically creates |
-|-----|-------------------|
-| SystemAdmin | General Manager (first handoff), recovery for other roles |
-| General Manager | Department heads |
-| Front Office Manager | Receptionists |
-| Housekeeping Manager | Housekeeping staff |
-| Maintenance Manager | Maintenance staff |
+## Quick start (recommended)
+
+### 1. Clone and install
+
+```bash
+git clone <repo-url>
+cd hotel-frontend
+npm install --prefix frontend
+npm install --prefix backend
+```
 

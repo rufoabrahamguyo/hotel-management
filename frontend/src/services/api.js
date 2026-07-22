@@ -4,30 +4,62 @@ import { emitSessionActivity } from '../auth/sessionEvents';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? '';
 
-export const api = axios.create({
-  baseURL,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 30_000,
-});
+/**
+ * Factory keeps HTTP client injectable for tests (DIP).
+ * @param {{ getToken?: () => string | null, clearSession?: () => void, clearProperty?: () => void, redirectToSelectProperty?: () => void }} deps
+ */
+export function createApi(deps = {}) {
+  const getToken = deps.getToken ?? (() => useAuthStore.getState().token);
+  const clearSession = deps.clearSession ?? (() => useAuthStore.getState().clearSession());
+  const clearProperty =
+    deps.clearProperty ?? (() => useAuthStore.setState({ propertyId: null }));
+  const redirectToSelectProperty =
+    deps.redirectToSelectProperty ??
+    (() => {
+      if (!window.location.pathname.startsWith('/select-property')) {
+        window.location.assign('/select-property');
+      }
+    });
 
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+  const client = axios.create({
+    baseURL,
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 30_000,
+  });
 
-api.interceptors.response.use(
-  (res) => {
-    emitSessionActivity();
-    return res;
-  },
-  (err) => {
-    const status = err.response?.status;
-    if (status === 401) {
-      useAuthStore.getState().clearSession();
+  client.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-    return Promise.reject(err);
-  },
-);
+    return config;
+  });
+
+  client.interceptors.response.use(
+    (res) => {
+      emitSessionActivity();
+      return res;
+    },
+    (err) => {
+      const status = err.response?.status;
+      const data = err.response?.data ?? {};
+      const message = data.message ?? '';
+      const code = data.code;
+      if (status === 401) {
+        clearSession();
+      } else if (
+        status === 403 &&
+        (code === 'PROPERTY_REQUIRED' ||
+          (typeof message === 'string' && message.toLowerCase().includes('select a property')))
+      ) {
+        clearProperty();
+        redirectToSelectProperty();
+      }
+      return Promise.reject(err);
+    },
+  );
+
+  return client;
+}
+
+export const api = createApi();

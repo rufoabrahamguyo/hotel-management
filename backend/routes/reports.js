@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { pool } from '../db/pool.js';
-import { requireStaffJwt } from '../middleware/requireStaffJwt.js';
+import { requireStaffJwt, requirePropertyContext } from '../middleware/requireStaffJwt.js';
 
 const router = Router();
-router.use(requireStaffJwt);
+/** Ops KPIs for dashboard / rail - any signed-in staff with a property may read. */
+router.use(requireStaffJwt, requirePropertyContext);
 
-router.get('/summary', async (_req, res) => {
+router.get('/summary', async (req, res) => {
+  const propertyId = req.auth.propertyId;
   try {
     const [
       roomsByStatus,
@@ -18,21 +20,23 @@ router.get('/summary', async (_req, res) => {
       todayFlowRow,
       upcomingBookingsRow,
     ] = await Promise.all([
-      pool.query(`SELECT status, COUNT(*)::int AS count FROM room GROUP BY status ORDER BY status`),
-      pool.query(`SELECT status, COUNT(*)::int AS count FROM reservation GROUP BY status ORDER BY status`),
+      pool.query(`SELECT status, COUNT(*)::int AS count FROM room WHERE property_id = $1 GROUP BY status ORDER BY status`, [propertyId]),
+      pool.query(`SELECT status, COUNT(*)::int AS count FROM reservation WHERE property_id = $1 GROUP BY status ORDER BY status`, [propertyId]),
       pool.query(
         `SELECT COALESCE(SUM(total_rate), 0)::float8 AS revenue
-         FROM reservation WHERE status IN ('checked_in','checked_out','upcoming')`,
+         FROM reservation WHERE property_id = $1 AND status IN ('checked_in','checked_out','upcoming')`,
+        [propertyId],
       ),
-      pool.query(`SELECT COUNT(*)::int AS n FROM reservation WHERE status = 'checked_in'`),
+      pool.query(`SELECT COUNT(*)::int AS n FROM reservation WHERE property_id = $1 AND status = 'checked_in'`, [propertyId]),
       pool.query(`
         SELECT COUNT(*)::int AS n FROM reservation
-        WHERE status IN ('upcoming','checked_in')
+        WHERE property_id = $1
+          AND status IN ('upcoming','checked_in')
           AND check_in <= NOW() + interval '36 hours'
-          AND check_out >= NOW() - interval '12 hours'`),
+          AND check_out >= NOW() - interval '12 hours'`, [propertyId]),
       pool.query(`
         SELECT COUNT(*)::int AS n FROM reservation
-        WHERE status = 'checked_in' AND check_out::date <= (NOW() AT TIME ZONE 'UTC')::date + 1`),
+        WHERE property_id = $1 AND status = 'checked_in' AND check_out::date <= (NOW() AT TIME ZONE 'UTC')::date + 1`, [propertyId]),
       pool.query(`
         SELECT
           COUNT(*) FILTER (WHERE status = 'vacant')::int AS vacant,
@@ -42,7 +46,7 @@ router.get('/summary', async (_req, res) => {
           COUNT(*) FILTER (WHERE status = 'inspecting')::int AS inspecting,
           COUNT(*) FILTER (WHERE status = 'maintenance')::int AS maintenance,
           COUNT(*)::int AS total
-        FROM room`),
+        FROM room WHERE property_id = $1`, [propertyId]),
       pool.query(`
         SELECT
           COUNT(*) FILTER (
@@ -53,8 +57,8 @@ router.get('/summary', async (_req, res) => {
             WHERE status = 'checked_in'
               AND check_out::date = CURRENT_DATE
           )::int AS departures_due_today
-        FROM reservation`),
-      pool.query(`SELECT COUNT(*)::int AS n FROM reservation WHERE status = 'upcoming'`),
+        FROM reservation WHERE property_id = $1`, [propertyId]),
+      pool.query(`SELECT COUNT(*)::int AS n FROM reservation WHERE property_id = $1 AND status = 'upcoming'`, [propertyId]),
     ]);
 
     const b = roomBuckets.rows[0] ?? {};

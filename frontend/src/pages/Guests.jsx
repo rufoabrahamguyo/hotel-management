@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { pageCardStyle as cardStyle, pageHeaderStyle as headerStyle, pageWrapStyle } from '../layout/pageStyles';
 
 const { Paragraph, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -41,13 +42,6 @@ function statusColorReservation(s) {
       return 'blue';
   }
 }
-
-const cardStyle = {
-  background: '#161b22',
-  borderRadius: 8,
-  border: '1px solid #21262d',
-};
-const headerStyle = { background: '#12181f', borderBottom: '1px solid #21262d', color: '#e6edf3' };
 
 export default function Guests() {
   const qc = useQueryClient();
@@ -303,14 +297,24 @@ export default function Guests() {
               Edit
             </Button>
             {r.status === 'upcoming' && (
-              <Button size="small" type="primary" ghost onClick={() => quickCheckIn(r.id)}>
-                Check in
-              </Button>
+              <Popconfirm
+                title="Check this guest in?"
+                okText="Check in"
+                onConfirm={() => quickCheckIn(r.id)}
+              >
+                <Button size="small" type="primary" ghost>
+                  Check in
+                </Button>
+              </Popconfirm>
             )}
             {r.status === 'checked_in' && (
-              <Button size="small" onClick={() => quickCheckOut(r.id)}>
-                Check out
-              </Button>
+              <Popconfirm
+                title="Check this guest out?"
+                okText="Check out"
+                onConfirm={() => quickCheckOut(r.id)}
+              >
+                <Button size="small">Check out</Button>
+              </Popconfirm>
             )}
             <Popconfirm
               title="Delete reservation?"
@@ -361,7 +365,7 @@ export default function Guests() {
   );
 
   return (
-    <div style={{ padding: '28px clamp(18px, 3vw, 36px)', minHeight: '100%', color: '#e6edf3' }}>
+    <div style={pageWrapStyle}>
       <Tabs
         defaultActiveKey="reservations"
         items={[
@@ -376,7 +380,7 @@ export default function Guests() {
               <Card bordered={false} style={cardStyle} styles={{ header: headerStyle }} title="Stays">
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <Space wrap>
-                    <Title level={5} style={{ margin: 0, color: '#e6edf3' }}>
+                    <Title level={5} style={{ margin: 0 }}>
                       Guest ledger & arrivals
                     </Title>
                     <Select
@@ -391,7 +395,7 @@ export default function Guests() {
                       New reservation
                     </Button>
                   </Space>
-                  <Paragraph type="secondary" style={{ color: '#8b949e', marginBottom: 0 }}>
+                  <Paragraph type="secondary" style={{ marginBottom: 0 }}>
                     Check-in marks the room occupied; check-out sends it back to housekeeping for cleaning.
                   </Paragraph>
                   <Table
@@ -414,7 +418,7 @@ export default function Guests() {
               <Card bordered={false} style={cardStyle} styles={{ header: headerStyle }} title="Guest profiles">
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <Space wrap>
-                    <Title level={5} style={{ margin: 0, color: '#e6edf3' }}>
+                    <Title level={5} style={{ margin: 0 }}>
                       Profiles
                     </Title>
                     <Button type="primary" icon={<PlusOutlined />} onClick={openNewGuest}>

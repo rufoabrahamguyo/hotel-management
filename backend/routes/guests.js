@@ -1,15 +1,17 @@
 import { Router } from 'express';
 import { pool } from '../db/pool.js';
-import { requireStaffJwt } from '../middleware/requireStaffJwt.js';
+import { requireStaffJwt, requirePropertyContext } from '../middleware/requireStaffJwt.js';
+import { requireFeature } from '../lib/permissions.js';
 
 const router = Router();
-router.use(requireStaffJwt);
+router.use(requireStaffJwt, requirePropertyContext, requireFeature('guests'));
 
-router.get('/', async (_req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT id, full_name, email, phone, document_id, notes, created_at
-       FROM guest ORDER BY full_name ASC`,
+       FROM guest WHERE property_id = $1 ORDER BY full_name ASC`,
+      [req.auth.propertyId],
     );
     return res.json({ guests: rows });
   } catch (err) {
@@ -26,10 +28,11 @@ router.post('/', async (req, res) => {
   }
   try {
     const { rows } = await pool.query(
-      `INSERT INTO guest (full_name, email, phone, document_id, notes)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO guest (property_id, full_name, email, phone, document_id, notes)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, full_name, email, phone, document_id, notes, created_at`,
       [
+        req.auth.propertyId,
         name,
         email != null ? String(email).trim() || null : null,
         phone != null ? String(phone).trim() || null : null,
@@ -79,11 +82,11 @@ router.patch('/:id', async (req, res) => {
   if (!fields.length) {
     return res.status(400).json({ error: 'Validation', message: 'No updates provided.' });
   }
-  vals.push(id);
+  vals.push(id, req.auth.propertyId);
   try {
     const { rows } = await pool.query(
       `UPDATE guest SET ${fields.join(', ')}
-       WHERE id = $${fields.length + 1}
+       WHERE id = $${fields.length + 1} AND property_id = $${fields.length + 2}
        RETURNING id, full_name, email, phone, document_id, notes, created_at`,
       vals,
     );
@@ -103,7 +106,7 @@ router.delete('/:id', async (req, res) => {
     return res.status(400).json({ error: 'Validation', message: 'Invalid guest id.' });
   }
   try {
-    await pool.query(`DELETE FROM guest WHERE id = $1`, [id]);
+    await pool.query(`DELETE FROM guest WHERE id = $1 AND property_id = $2`, [id, req.auth.propertyId]);
     return res.status(204).send();
   } catch (err) {
     if (err.code === '23503') {

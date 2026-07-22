@@ -27,12 +27,18 @@ export function normalizeRole(role) {
 
 export function canManageStaff(role) {
   const r = normalizeRole(role);
-  return r != null;
+  return (
+    r === ROLE.SYSTEM_ADMIN ||
+    r === ROLE.GENERAL_MANAGER ||
+    r === ROLE.FRONT_OFFICE_MANAGER ||
+    r === ROLE.HOUSEKEEPING_MANAGER ||
+    r === ROLE.MAINTENANCE_MANAGER
+  );
 }
 
-/** Treat as “full property” UI access (used by optional feature flags). */
+/** Roles with org-wide property visibility (SystemAdmin). */
 export function hasPropertyWideAccess(role) {
-  return normalizeRole(role) != null;
+  return normalizeRole(role) === ROLE.SYSTEM_ADMIN;
 }
 
 export const ROLE_DESCRIPTIONS = {

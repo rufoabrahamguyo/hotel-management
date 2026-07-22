@@ -1,22 +1,24 @@
 import { Router } from 'express';
 import { pool } from '../db/pool.js';
-import { requireStaffJwt } from '../middleware/requireStaffJwt.js';
+import { requireStaffJwt, requirePropertyContext } from '../middleware/requireStaffJwt.js';
+import { requireFeature } from '../lib/permissions.js';
 
 const router = Router();
-router.use(requireStaffJwt);
+router.use(requireStaffJwt, requirePropertyContext, requireFeature('guests'));
 
 export const RESERVATION_STATUSES = ['upcoming', 'checked_in', 'checked_out', 'cancelled', 'no_show'];
 
-async function overlaps(client, roomId, checkIn, checkOut, excludeId) {
-  const args = [roomId, checkIn, checkOut];
+async function overlaps(client, propertyId, roomId, checkIn, checkOut, excludeId) {
+  const args = [propertyId, roomId, checkIn, checkOut];
   let sql = `
     SELECT id FROM reservation
-    WHERE room_id = $1
+    WHERE property_id = $1
+      AND room_id = $2
       AND status NOT IN ('cancelled', 'checked_out', 'no_show')
-      AND NOT (check_out <= $2::timestamptz OR check_in >= $3::timestamptz)
+      AND NOT (check_out <= $3::timestamptz OR check_in >= $4::timestamptz)
   `;
   if (excludeId) {
-    sql += ` AND id <> $4`;
+    sql += ` AND id <> $5`;
     args.push(excludeId);
   }
   sql += ` LIMIT 1`;
@@ -38,8 +40,8 @@ function parseTs(v, label) {
 router.get('/', async (req, res) => {
   const { status, from, to } = req.query;
   try {
-    const args = [];
-    const where = [];
+    const args = [req.auth.propertyId];
+    const where = [`r.property_id = $1`];
     if (status && typeof status === 'string') {
       args.push(status);
       where.push(`r.status = $${args.length}`);
@@ -57,7 +59,6 @@ router.get('/', async (req, res) => {
       where.push(`r.check_in <= $${args.length}`);
     }
 
-    const w = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const { rows } = await pool.query(
       `SELECT r.id, r.guest_id, r.room_id, r.check_in, r.check_out, r.status,
               r.adults, r.total_rate, r.notes, r.created_at,
@@ -66,7 +67,7 @@ router.get('/', async (req, res) => {
        FROM reservation r
        INNER JOIN guest g ON g.id = r.guest_id
        INNER JOIN room rm ON rm.id = r.room_id
-       ${w}
+       WHERE ${where.join(' AND ')}
        ORDER BY r.check_in DESC, r.id DESC`,
       args,
     );
@@ -100,23 +101,24 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Validation', message: 'Invalid reservation status.' });
   }
 
+  const propertyId = req.auth.propertyId;
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    const chkGuest = await client.query(`SELECT id FROM guest WHERE id = $1`, [gi]);
+    const chkGuest = await client.query(`SELECT id FROM guest WHERE id = $1 AND property_id = $2`, [gi, propertyId]);
     if (!chkGuest.rows.length) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Not found', message: 'Guest not found.' });
     }
 
-    const chkRoom = await client.query(`SELECT id, base_rate FROM room WHERE id = $1`, [ri]);
+    const chkRoom = await client.query(`SELECT id, base_rate FROM room WHERE id = $1 AND property_id = $2`, [ri, propertyId]);
     if (!chkRoom.rows.length) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Not found', message: 'Room not found.' });
     }
 
-    if (await overlaps(client, ri, cIn.iso, cOut.iso, null)) {
+    if (await overlaps(client, propertyId, ri, cIn.iso, cOut.iso, null)) {
       await client.query('ROLLBACK');
       return res.status(409).json({
         error: 'Conflict',
@@ -138,10 +140,11 @@ router.post('/', async (req, res) => {
     }
 
     const { rows } = await client.query(
-      `INSERT INTO reservation (guest_id, room_id, check_in, check_out, status, adults, total_rate, notes)
-       VALUES ($1, $2, $3::timestamptz, $4::timestamptz, $5, $6, $7, $8)
+      `INSERT INTO reservation (property_id, guest_id, room_id, check_in, check_out, status, adults, total_rate, notes)
+       VALUES ($1, $2, $3, $4::timestamptz, $5::timestamptz, $6, $7, $8, $9)
        RETURNING id`,
       [
+        propertyId,
         gi,
         ri,
         cIn.iso,
@@ -179,11 +182,15 @@ router.patch('/:id', async (req, res) => {
   }
 
   const { guest_id, room_id, check_in, check_out, adults, total_rate, notes, status } = req.body ?? {};
+  const propertyId = req.auth.propertyId;
 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const { rows: curRows } = await client.query(`SELECT * FROM reservation WHERE id = $1 FOR UPDATE`, [id]);
+    const { rows: curRows } = await client.query(
+      `SELECT * FROM reservation WHERE id = $1 AND property_id = $2 FOR UPDATE`,
+      [id, propertyId],
+    );
     if (!curRows.length) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Not found', message: 'Reservation not found.' });
@@ -219,7 +226,7 @@ router.patch('/:id', async (req, res) => {
         await client.query('ROLLBACK');
         return res.status(400).json({ error: 'Validation', message: 'Invalid guest_id.' });
       }
-      const chk = await client.query(`SELECT id FROM guest WHERE id = $1`, [nextGi]);
+      const chk = await client.query(`SELECT id FROM guest WHERE id = $1 AND property_id = $2`, [nextGi, propertyId]);
       if (!chk.rows.length) {
         await client.query('ROLLBACK');
         return res.status(404).json({ error: 'Not found', message: 'Guest not found.' });
@@ -231,7 +238,7 @@ router.patch('/:id', async (req, res) => {
         await client.query('ROLLBACK');
         return res.status(400).json({ error: 'Validation', message: 'Invalid room_id.' });
       }
-      const chk = await client.query(`SELECT id FROM room WHERE id = $1`, [nextRi]);
+      const chk = await client.query(`SELECT id FROM room WHERE id = $1 AND property_id = $2`, [nextRi, propertyId]);
       if (!chk.rows.length) {
         await client.query('ROLLBACK');
         return res.status(404).json({ error: 'Not found', message: 'Room not found.' });
@@ -250,7 +257,7 @@ router.patch('/:id', async (req, res) => {
 
     const overlapsNeeded = !['cancelled', 'checked_out', 'no_show'].includes(nextStat);
 
-    if (overlapsNeeded && (await overlaps(client, nextRi, nextIn, nextOut, id))) {
+    if (overlapsNeeded && (await overlaps(client, propertyId, nextRi, nextIn, nextOut, id))) {
       await client.query('ROLLBACK');
       return res.status(409).json({
         error: 'Conflict',
@@ -283,10 +290,10 @@ router.patch('/:id', async (req, res) => {
       fields.push(`notes = $${idx}`);
       vals.push(notes === '' ? null : String(notes));
     }
-    vals.push(id);
+    vals.push(id, propertyId);
     const { rows } = await client.query(
       `UPDATE reservation SET ${fields.join(', ')}
-       WHERE id = $${vals.length}
+       WHERE id = $${vals.length - 1} AND property_id = $${vals.length}
        RETURNING *`,
       vals,
     );
@@ -325,7 +332,7 @@ router.delete('/:id', async (req, res) => {
     return res.status(400).json({ error: 'Validation', message: 'Invalid reservation id.' });
   }
   try {
-    await pool.query(`DELETE FROM reservation WHERE id = $1`, [id]);
+    await pool.query(`DELETE FROM reservation WHERE id = $1 AND property_id = $2`, [id, req.auth.propertyId]);
     return res.status(204).send();
   } catch (err) {
     console.error('[reservations DELETE]', err);

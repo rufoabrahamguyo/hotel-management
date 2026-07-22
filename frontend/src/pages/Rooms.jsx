@@ -17,6 +17,7 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { pageCardStyle as cardStyle, pageHeaderStyle as headerStyle, pageWrapStyle } from '../layout/pageStyles';
 
 const { Paragraph, Title } = Typography;
 
@@ -39,13 +40,6 @@ function roomStatusColor(s) {
       return 'default';
   }
 }
-
-const cardStyle = {
-  background: '#161b22',
-  borderRadius: 8,
-  border: '1px solid #21262d',
-};
-const headerStyle = { background: '#12181f', borderBottom: '1px solid #21262d', color: '#e6edf3' };
 
 export default function Rooms() {
   const qc = useQueryClient();
@@ -180,7 +174,7 @@ export default function Rooms() {
   );
 
   return (
-    <div style={{ padding: '28px clamp(18px, 3vw, 36px)', minHeight: '100%', color: '#e6edf3' }}>
+    <div style={pageWrapStyle}>
       <Card
         bordered={false}
         style={cardStyle}
@@ -193,10 +187,10 @@ export default function Rooms() {
         }
       >
         <Space direction="vertical" size={16} style={{ width: '100%' }}>
-          <Title level={5} style={{ margin: 0, color: '#e6edf3' }}>
+          <Title level={5} style={{ margin: 0 }}>
             Room grid
           </Title>
-          <Paragraph type="secondary" style={{ color: '#8b949e', marginBottom: 0 }}>
+          <Paragraph type="secondary" style={{ marginBottom: 0 }}>
             Status feeds the front desk and housekeeping. Updating the nightly rate fills in totals on new bookings when you
             leave total blank.
           </Paragraph>
