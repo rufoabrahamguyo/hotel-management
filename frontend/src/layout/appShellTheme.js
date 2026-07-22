@@ -5,19 +5,16 @@ import { propizy } from './propizyTokens';
 export const appShellTheme = {
   algorithm: theme.defaultAlgorithm,
   token: {
-    colorPrimary: propizy.primary,
-    colorSuccess: propizy.success,
-    colorWarning: propizy.caution,
-    colorError: propizy.alert,
-    colorInfo: propizy.info,
-    colorBgLayout: propizy.bg,
-    colorBgContainer: propizy.surface,
-    colorBorder: propizy.border,
-    colorBorderSecondary: '#edf1f5',
-    colorText: propizy.text,
-    colorTextSecondary: propizy.muted,
-    colorTextDescription: '#7a8a9c',
-    borderRadius: 12,
+    colorPrimary: '#4da6ff',
+    colorSuccess: '#3fb950',
+    colorBgLayout: '#0d1117',
+    colorBgContainer: '#161b22',
+    colorBorder: '#30363d',
+    colorBorderSecondary: '#21262d',
+    colorText: '#e6edf3',
+    colorTextSecondary: '#8b949e',
+    colorTextDescription: '#6e7681',
+    borderRadius: 8,
     fontFamily:
       "'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     controlHeight: 40,
@@ -43,17 +40,8 @@ export const appShellTheme = {
       itemBorderRadius: 10,
     },
     Button: {
-      colorPrimaryHover: propizy.primaryHover,
-      primaryShadow: '0 4px 14px rgba(26, 63, 99, 0.22)',
-    },
-    Input: {
-      colorBgContainer: propizy.surface,
-      activeBorderColor: propizy.primary,
-      hoverBorderColor: '#c5d0dc',
-    },
-    Tag: {
-      defaultBg: '#eef2f6',
-      defaultColor: propizy.muted,
+      colorPrimaryHover: '#5eb3ff',
     },
   },
 };
+
