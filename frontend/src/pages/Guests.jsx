@@ -12,42 +12,49 @@ import {
   Space,
   Table,
   Tabs,
-  Tag,
   Typography,
+  Upload,
 } from 'antd';
-import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, CalendarOutlined, UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { pageCardStyle as cardStyle, pageHeaderStyle as headerStyle, pageWrapStyle } from '../layout/pageStyles';
+import {
+  RESERVATION_STATUSES,
+  reservationStatusLabel,
+} from '../layout/reservationStatus';
+import { ReservationStatusPill } from '../components/StatusPill';
 
-const { Paragraph, Title } = Typography;
+const { Paragraph, Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const RESERVATION_STATUS = ['upcoming', 'checked_in', 'checked_out', 'cancelled', 'no_show'];
+const RESERVATION_STATUS = RESERVATION_STATUSES;
 
-function statusColorReservation(s) {
-  switch (s) {
-    case 'checked_in':
-      return 'processing';
-    case 'upcoming':
-      return 'cyan';
-    case 'checked_out':
-      return 'default';
-    case 'cancelled':
-    case 'no_show':
-      return 'warning';
-    default:
-      return 'blue';
-  }
+async function downloadGuestDocument(guestId, filename) {
+  const { data } = await api.get(`/guests/${guestId}/document`, { responseType: 'blob' });
+  const url = URL.createObjectURL(data);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'guest-document';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-const cardStyle = {
-  background: '#161b22',
-  borderRadius: 8,
-  border: '1px solid #21262d',
-};
-const headerStyle = { background: '#12181f', borderBottom: '1px solid #21262d', color: '#e6edf3' };
+function buildGuestFormData(values, { clearDocument = false } = {}) {
+  const fd = new FormData();
+  fd.append('full_name', values.full_name.trim());
+  fd.append('email', values.email?.trim() || '');
+  fd.append('phone', values.phone?.trim() || '');
+  fd.append('document_id', values.document_id?.trim() || '');
+  fd.append('notes', values.notes?.trim() || '');
+  if (clearDocument) fd.append('clear_document', 'true');
+  const fileList = values.document_file;
+  const file = fileList?.[0]?.originFileObj;
+  if (file) fd.append('document', file);
+  return fd;
+}
 
 export default function Guests() {
   const qc = useQueryClient();
@@ -58,6 +65,7 @@ export default function Guests() {
   const [guestForm] = Form.useForm();
   const [resForm] = Form.useForm();
   const [statusFilter, setStatusFilter] = useState(undefined);
+  const [clearDocument, setClearDocument] = useState(false);
 
   const guestsQ = useQuery({
     queryKey: ['guests'],
@@ -86,8 +94,8 @@ export default function Guests() {
   });
 
   const saveGuestMutation = useMutation({
-    mutationFn: async ({ id, payload }) =>
-      id ? api.patch(`/guests/${id}`, payload) : api.post('/guests', payload),
+    mutationFn: async ({ id, formData }) =>
+      id ? api.patch(`/guests/${id}`, formData) : api.post('/guests', formData),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['guests'] });
       qc.invalidateQueries({ queryKey: ['reservations'] });
@@ -95,6 +103,7 @@ export default function Guests() {
       guestForm.resetFields();
       setGuestModalOpen(false);
       setEditingGuest(null);
+      setClearDocument(false);
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || 'Could not save guest.');
@@ -143,6 +152,7 @@ export default function Guests() {
 
   const openNewGuest = useCallback(() => {
     setEditingGuest(null);
+    setClearDocument(false);
     guestForm.resetFields();
     setGuestModalOpen(true);
   }, [guestForm]);
@@ -150,12 +160,14 @@ export default function Guests() {
   const openEditGuest = useCallback(
     (g) => {
       setEditingGuest(g);
+      setClearDocument(false);
       guestForm.setFieldsValue({
         full_name: g.full_name,
         email: g.email ?? '',
         phone: g.phone ?? '',
         document_id: g.document_id ?? '',
         notes: g.notes ?? '',
+        document_file: [],
       });
       setGuestModalOpen(true);
     },
@@ -197,14 +209,8 @@ export default function Guests() {
   );
 
   const onGuestSubmit = (values) => {
-    const payload = {
-      full_name: values.full_name.trim(),
-      email: values.email?.trim() || null,
-      phone: values.phone?.trim() || null,
-      document_id: values.document_id?.trim() || null,
-      notes: values.notes?.trim() || null,
-    };
-    saveGuestMutation.mutate({ id: editingGuest?.id, payload });
+    const formData = buildGuestFormData(values, { clearDocument });
+    saveGuestMutation.mutate({ id: editingGuest?.id, formData });
   };
 
   const onResSubmit = (values) => {
@@ -283,7 +289,7 @@ export default function Guests() {
         dataIndex: 'status',
         key: 'status',
         width: 118,
-        render: (s) => <Tag color={statusColorReservation(s)}>{s.replace('_', ' ')}</Tag>,
+        render: (s) => <ReservationStatusPill status={s} />,
       },
       {
         title: 'Total',
@@ -303,14 +309,24 @@ export default function Guests() {
               Edit
             </Button>
             {r.status === 'upcoming' && (
-              <Button size="small" type="primary" ghost onClick={() => quickCheckIn(r.id)}>
-                Check in
-              </Button>
+              <Popconfirm
+                title="Check this guest in?"
+                okText="Check in"
+                onConfirm={() => quickCheckIn(r.id)}
+              >
+                <Button size="small" type="primary" ghost>
+                  Check in
+                </Button>
+              </Popconfirm>
             )}
             {r.status === 'checked_in' && (
-              <Button size="small" onClick={() => quickCheckOut(r.id)}>
-                Check out
-              </Button>
+              <Popconfirm
+                title="Check this guest out?"
+                okText="Check out"
+                onConfirm={() => quickCheckOut(r.id)}
+              >
+                <Button size="small">Check out</Button>
+              </Popconfirm>
             )}
             <Popconfirm
               title="Delete reservation?"
@@ -334,6 +350,31 @@ export default function Guests() {
       { title: 'Name', dataIndex: 'full_name', key: 'full_name' },
       { title: 'Email', dataIndex: 'email', key: 'email', ellipsis: true, render: (t) => t || '-' },
       { title: 'Phone', dataIndex: 'phone', key: 'phone', width: 130, render: (t) => t || '-' },
+      {
+        title: 'ID / passport',
+        key: 'document',
+        width: 180,
+        render: (_, g) => (
+          <div style={{ minWidth: 0 }}>
+            <div>{g.document_id || '-'}</div>
+            {g.has_document ? (
+              <Button
+                type="link"
+                size="small"
+                icon={<PaperClipOutlined />}
+                style={{ padding: 0, height: 'auto' }}
+                onClick={() =>
+                  downloadGuestDocument(g.id, g.document_file_name).catch(() =>
+                    toast.error('Could not download document.'),
+                  )
+                }
+              >
+                {g.document_file_name || 'View file'}
+              </Button>
+            ) : null}
+          </div>
+        ),
+      },
       {
         title: '',
         key: 'act',
@@ -361,7 +402,7 @@ export default function Guests() {
   );
 
   return (
-    <div style={{ padding: '28px clamp(18px, 3vw, 36px)', minHeight: '100%', color: '#e6edf3' }}>
+    <div style={pageWrapStyle}>
       <Tabs
         defaultActiveKey="reservations"
         items={[
@@ -376,7 +417,7 @@ export default function Guests() {
               <Card bordered={false} style={cardStyle} styles={{ header: headerStyle }} title="Stays">
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <Space wrap>
-                    <Title level={5} style={{ margin: 0, color: '#e6edf3' }}>
+                    <Title level={5} style={{ margin: 0 }}>
                       Guest ledger & arrivals
                     </Title>
                     <Select
@@ -384,14 +425,14 @@ export default function Guests() {
                       placeholder="Filter status"
                       style={{ minWidth: 160 }}
                       value={statusFilter}
-                      options={RESERVATION_STATUS.map((v) => ({ label: v.replace('_', ' '), value: v }))}
+                      options={RESERVATION_STATUS.map((v) => ({ label: reservationStatusLabel(v), value: v }))}
                       onChange={(v) => setStatusFilter(v)}
                     />
                     <Button type="primary" icon={<PlusOutlined />} onClick={openNewReservation}>
                       New reservation
                     </Button>
                   </Space>
-                  <Paragraph type="secondary" style={{ color: '#8b949e', marginBottom: 0 }}>
+                  <Paragraph type="secondary" style={{ marginBottom: 0 }}>
                     Check-in marks the room occupied; check-out sends it back to housekeeping for cleaning.
                   </Paragraph>
                   <Table
@@ -414,7 +455,7 @@ export default function Guests() {
               <Card bordered={false} style={cardStyle} styles={{ header: headerStyle }} title="Guest profiles">
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <Space wrap>
-                    <Title level={5} style={{ margin: 0, color: '#e6edf3' }}>
+                    <Title level={5} style={{ margin: 0 }}>
                       Profiles
                     </Title>
                     <Button type="primary" icon={<PlusOutlined />} onClick={openNewGuest}>
@@ -444,6 +485,7 @@ export default function Guests() {
         onCancel={() => {
           setGuestModalOpen(false);
           setEditingGuest(null);
+          setClearDocument(false);
           guestForm.resetFields();
         }}
         footer={null}
@@ -457,11 +499,50 @@ export default function Guests() {
             <Input placeholder="guest@example.com" />
           </Form.Item>
           <Form.Item name="phone" label="Phone">
-            <Input />
+            <Input placeholder="+2547…" />
           </Form.Item>
-          <Form.Item name="document_id" label="ID / passport">
-            <Input />
+          <Form.Item name="document_id" label="ID / passport number">
+            <Input placeholder="e.g. A1234567" />
           </Form.Item>
+          <Form.Item
+            name="document_file"
+            label="ID / passport scan"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+            extra="JPEG, PNG, WebP, or PDF · max 8 MB"
+          >
+            <Upload
+              beforeUpload={() => false}
+              maxCount={1}
+              accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
+              onChange={() => setClearDocument(false)}
+            >
+              <Button icon={<UploadOutlined />}>Upload file</Button>
+            </Upload>
+          </Form.Item>
+          {editingGuest?.has_document && !clearDocument ? (
+            <div style={{ marginTop: -8, marginBottom: 16 }}>
+              <Text type="secondary" style={{ fontSize: 13 }}>
+                On file: {editingGuest.document_file_name || 'document'}
+              </Text>
+              <Button
+                type="link"
+                size="small"
+                danger
+                onClick={() => {
+                  setClearDocument(true);
+                  guestForm.setFieldsValue({ document_file: [] });
+                }}
+              >
+                Remove file
+              </Button>
+            </div>
+          ) : null}
+          {clearDocument ? (
+            <Text type="secondary" style={{ display: 'block', marginTop: -8, marginBottom: 16, fontSize: 13 }}>
+              Existing scan will be removed on save.
+            </Text>
+          ) : null}
           <Form.Item name="notes" label="Notes">
             <Input.TextArea rows={3} />
           </Form.Item>
@@ -514,7 +595,7 @@ export default function Guests() {
             <InputNumber min={1} max={12} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="status" label="Status">
-            <Select options={RESERVATION_STATUS.map((v) => ({ label: v.replace('_', ' '), value: v }))} />
+            <Select options={RESERVATION_STATUS.map((v) => ({ label: reservationStatusLabel(v), value: v }))} />
           </Form.Item>
           <Form.Item name="total_rate" label="Total rate (optional)">
             <InputNumber prefix="$" min={0} style={{ width: '100%' }} placeholder="Auto from nightly rate × nights" />

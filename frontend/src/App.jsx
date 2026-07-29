@@ -1,17 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider } from 'antd';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import SelectProperty from './pages/SelectProperty';
 import Dashboard from './pages/Dashboard';
 import Guests from './pages/Guests';
 import Rooms from './pages/Rooms';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import CreateStaff from './pages/admin/CreateStaff';
+import Properties from './pages/admin/Properties';
 import RoleRoute from './components/RoleRoute';
 import SessionManager from './components/SessionManager';
 import AppShellLayout from './layout/AppShellLayout';
+import { appShellTheme } from './layout/appShellTheme';
 import { useAuthStore } from './store/authstore';
 
 const queryClient = new QueryClient({
@@ -22,17 +26,44 @@ const queryClient = new QueryClient({
 
 function ProtectedShell() {
   const token = useAuthStore((s) => s.token);
+  const propertyId = useAuthStore((s) => s.propertyId);
   const location = useLocation();
   if (!token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+  if (!propertyId) {
+    return <Navigate to="/select-property" state={{ from: location }} replace />;
+  }
   return <AppShellLayout />;
+}
+
+function RequirePendingAuth({ children }) {
+  const token = useAuthStore((s) => s.token);
+  const propertyId = useAuthStore((s) => s.propertyId);
+  const location = useLocation();
+  const switching = location.state?.switch === true;
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (propertyId && !switching) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
 }
 
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route
+        path="/select-property"
+        element={
+          <RequirePendingAuth>
+            <SelectProperty />
+          </RequirePendingAuth>
+        }
+      />
       <Route element={<ProtectedShell />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route
@@ -40,6 +71,14 @@ function AppRoutes() {
           element={
             <RoleRoute>
               <CreateStaff />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/admin/properties"
+          element={
+            <RoleRoute>
+              <Properties />
             </RoleRoute>
           }
         />
@@ -85,22 +124,7 @@ function AppRoutes() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.defaultAlgorithm,
-          token: {
-            colorPrimary: '#1a4a6e',
-            colorLink: '#1a4a6e',
-            borderRadius: 8,
-            fontFamily:
-              "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-          },
-          components: {
-            Button: { controlHeightLG: 44 },
-            Input: { controlHeightLG: 44 },
-          },
-        }}
-      >
+      <ConfigProvider theme={appShellTheme}>
         <BrowserRouter>
           <SessionManager />
           <AppRoutes />

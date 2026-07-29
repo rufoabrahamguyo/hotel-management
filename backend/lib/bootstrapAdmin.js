@@ -32,11 +32,18 @@ export async function ensureBootstrapAdmin() {
       return;
     }
 
+    const { rows: orgRows } = await pool.query(`SELECT id FROM organization ORDER BY id LIMIT 1`);
+    const organizationId = orgRows[0]?.id;
+    if (!organizationId) {
+      console.warn('[bootstrap] No organization exists yet; run `npm run init-db` first.');
+      return;
+    }
+
     const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
     await pool.query(
-      `INSERT INTO staff (name, role, username, email, password_hash, status, manager_staff_id)
-       VALUES ($1, $2, $3, $4, $5, 'active', NULL)`,
-      [name, ROLES.SYSTEM_ADMIN, username, email, password_hash],
+      `INSERT INTO staff (name, role, username, email, password_hash, status, manager_staff_id, organization_id)
+       VALUES ($1, $2, $3, $4, $5, 'active', NULL, $6)`,
+      [name, ROLES.SYSTEM_ADMIN, username, email, password_hash, organizationId],
     );
     console.log('[bootstrap] Created initial System Administrator from BOOTSTRAP_ADMIN_*.');
   } catch (err) {

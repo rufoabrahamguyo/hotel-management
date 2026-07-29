@@ -23,7 +23,15 @@ async function main() {
   const pmsSql = fs.readFileSync(pmsPath, 'utf8');
   await pool.query(pmsSql);
 
-  console.log('Schema + legacy + PMS migrations applied.');
+  const multitenantPath = path.join(__dirname, '..', 'db', 'migrate_multitenant.sql');
+  const multitenantSql = fs.readFileSync(multitenantPath, 'utf8');
+  await pool.query(multitenantSql);
+
+  const guestDocPath = path.join(__dirname, '..', 'db', 'migrate_guest_document.sql');
+  const guestDocSql = fs.readFileSync(guestDocPath, 'utf8');
+  await pool.query(guestDocSql);
+
+  console.log('Schema + legacy + PMS + multitenant + guest document migrations applied.');
   await pool.end();
 }
 

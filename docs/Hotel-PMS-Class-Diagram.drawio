@@ -1,0 +1,230 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-class" name="Class Diagram — Hotel PMS Domain">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Class Diagram — Hotel PMS Domain Model (multi-tenant)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="350" y="10" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Organization ========== -->
+        <mxCell id="class-org" value="Organization" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="org-attrs" value="- id: int&#xa;- name: string&#xa;- status: active | suspended&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-org">
+          <mxGeometry y="26" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="org-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-org">
+          <mxGeometry y="96" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="org-ops" value="+ createProperty(): Property" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-org">
+          <mxGeometry y="104" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Property ========== -->
+        <mxCell id="class-prop" value="Property" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="360" y="60" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="prop-attrs" value="- id: int&#xa;- organizationId: int&#xa;- name: string&#xa;- timezone: string&#xa;- defaultCheckIn: string&#xa;- defaultCheckOut: string&#xa;- status: active | archived&#xa;- createdAt: DateTime&#xa;- updatedAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-prop">
+          <mxGeometry y="26" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="prop-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-prop">
+          <mxGeometry y="146" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="prop-ops" value="+ updateSettings(dto): void&#xa;+ archive(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-prop">
+          <mxGeometry y="154" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Staff ========== -->
+        <mxCell id="class-staff" value="Staff" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="240" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attrs" value="- id: int&#xa;- name: string&#xa;- role: StaffRole&#xa;- username: string&#xa;- email: string?&#xa;- passwordHash: string&#xa;- status: active | suspended&#xa;- managerStaffId: int?&#xa;- organizationId: int&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-staff">
+          <mxGeometry y="26" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-staff">
+          <mxGeometry y="166" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-ops" value="+ login(u, p): Token&#xa;+ createStaff(dto): Staff&#xa;+ suspend(): void&#xa;+ selectProperty(id): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-staff">
+          <mxGeometry y="174" width="240" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- ========== StaffProperty (assoc class) ========== -->
+        <mxCell id="class-sp" value="StaffProperty" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="360" y="300" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sp-attrs" value="- staffId: int&#xa;- propertyId: int&#xa;«PK (staffId, propertyId)»" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-sp">
+          <mxGeometry y="26" width="180" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Guest ========== -->
+        <mxCell id="class-guest" value="Guest" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="680" y="60" width="220" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-attrs" value="- id: int&#xa;- propertyId: int&#xa;- fullName: string&#xa;- email: string?&#xa;- phone: string?&#xa;- documentId: string?&#xa;- notes: string?&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest">
+          <mxGeometry y="26" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-guest">
+          <mxGeometry y="136" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-ops" value="+ register(dto): Guest&#xa;+ updateProfile(dto): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest">
+          <mxGeometry y="144" width="220" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Room ========== -->
+        <mxCell id="class-room" value="Room" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="960" y="60" width="230" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="room-attrs" value="- id: int&#xa;- propertyId: int&#xa;- number: string&#xa;- floor: int&#xa;- type: string&#xa;- status: RoomStatus&#xa;- housekeepingNote: string?&#xa;- baseRate: decimal&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room">
+          <mxGeometry y="26" width="230" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="room-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-room">
+          <mxGeometry y="156" width="230" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="room-ops" value="+ updateStatus(s): void&#xa;+ addNote(n): void&#xa;+ isAvailable(from, to): bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room">
+          <mxGeometry y="164" width="230" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Reservation ========== -->
+        <mxCell id="class-res" value="Reservation" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="680" y="320" width="250" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="res-attrs" value="- id: int&#xa;- propertyId: int&#xa;- guestId: int&#xa;- roomId: int&#xa;- checkIn: DateTime&#xa;- checkOut: DateTime&#xa;- status: ReservationStatus&#xa;- adults: int&#xa;- totalRate: decimal?&#xa;- notes: string?&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-res">
+          <mxGeometry y="26" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="res-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="class-res">
+          <mxGeometry y="176" width="250" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="res-ops" value="+ create(g, r, dates): Reservation&#xa;+ checkIn(): void&#xa;+ checkOut(): void&#xa;+ cancel(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-res">
+          <mxGeometry y="184" width="250" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Report (service) ========== -->
+        <mxCell id="class-report" value="Report" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="360" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="report-ops" value="+ occupancy(propertyId): Summary&#xa;+ revenue(propertyId): Summary&#xa;+ opsSummary(propertyId): Summary" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-report">
+          <mxGeometry y="26" width="220" height="74" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Enumerations ========== -->
+        <mxCell id="enum-role" value="«enumeration»&#xa;StaffRole" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="enum-role-vals" value="SystemAdmin&#xa;GeneralManager&#xa;FrontOfficeManager&#xa;HousekeepingManager&#xa;RevenueManager&#xa;MaintenanceManager&#xa;Accountant&#xa;Receptionist&#xa;Housekeeping&#xa;Maintenance" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="enum-role">
+          <mxGeometry y="40" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="enum-room" value="«enumeration»&#xa;RoomStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="320" y="560" width="160" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="enum-room-vals" value="vacant&#xa;occupied&#xa;dirty&#xa;cleaning&#xa;inspecting&#xa;maintenance" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="enum-room">
+          <mxGeometry y="40" width="160" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="enum-res" value="«enumeration»&#xa;ReservationStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="520" y="560" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="enum-res-vals" value="upcoming&#xa;checked_in&#xa;checked_out&#xa;cancelled&#xa;no_show" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="enum-res">
+          <mxGeometry y="40" width="160" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ASSOCIATIONS ========== -->
+
+        <!-- Org 1 — * Property -->
+        <mxCell id="rel-org-prop" value="1&#xa;owns&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="class-org" target="class-prop">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Org 1 — * Staff -->
+        <mxCell id="rel-org-staff" value="1&#xa;employs&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="class-org" target="class-staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Staff self-manager -->
+        <mxCell id="rel-staff-mgr" value="0..1 manager&#xa;0..* reports" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=0;exitY=0.4;entryX=0;entryY=0.7;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="class-staff" target="class-staff">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="370" />
+              <mxPoint x="20" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Staff * — * Property via StaffProperty -->
+        <mxCell id="rel-staff-sp" value="*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=1;exitY=0.4;entryX=0;entryY=0.5;" edge="1" parent="1" source="class-staff" target="class-sp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-sp-prop" value="*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=0.5;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="class-sp" target="class-prop">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Property 1 — * Guest -->
+        <mxCell id="rel-prop-guest" value="1&#xa;hosts&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=1;exitY=0.4;entryX=0;entryY=0.4;" edge="1" parent="1" source="class-prop" target="class-guest">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Property 1 — * Room (aggregation) -->
+        <mxCell id="rel-prop-room" value="1&#xa;inventory&#xa;* " style="endArrow=diamondThin;endFill=0;html=1;rounded=0;endSize=14;fontSize=10;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" edge="1" parent="1" source="class-prop" target="class-room">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="186" />
+              <mxPoint x="640" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Property 1 — * Reservation -->
+        <mxCell id="rel-prop-res" value="1&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=1;exitY=1;entryX=0;entryY=0.2;" edge="1" parent="1" source="class-prop" target="class-res">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="280" />
+              <mxPoint x="600" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Guest 1 — * Reservation -->
+        <mxCell id="rel-guest-res" value="1&#xa;bookings&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="class-guest" target="class-res">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Room 1 — * Reservation -->
+        <mxCell id="rel-room-res" value="1&#xa;* " style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;exitX=0.5;exitY=1;entryX=1;entryY=0.3;" edge="1" parent="1" source="class-room" target="class-res">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Dependencies to enums -->
+        <mxCell id="dep-staff-role" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;" edge="1" parent="1" source="class-staff" target="enum-role">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-room-status" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;" edge="1" parent="1" source="class-room" target="enum-room">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1075" y="520" />
+              <mxPoint x="400" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep-res-status" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;" edge="1" parent="1" source="class-res" target="enum-res">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Report depends on Reservation / Room -->
+        <mxCell id="dep-report-res" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;" edge="1" parent="1" source="class-report" target="class-res">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-report-room" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;" edge="1" parent="1" source="class-report" target="class-room">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;- private attribute / + public operation&lt;br&gt;—— association (multiplicity labeled)&lt;br&gt;◇ hollow diamond = aggregation (Property inventory of Rooms)&lt;br&gt;- - → dependency (uses type)&lt;br&gt;&lt;br&gt;Aligned with schema: organization, property, staff, staff_property, guest, room, reservation.&lt;br&gt;Legacy hotel_setting was replaced by Property." style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="600" width="500" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

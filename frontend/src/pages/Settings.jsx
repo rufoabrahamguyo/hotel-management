@@ -4,15 +4,9 @@ import toast from 'react-hot-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { api } from '../services/api';
+import { pageCardStyle as cardStyle, pageHeaderStyle as headerStyle, pageWrapStyle } from '../layout/pageStyles';
 
 const { Paragraph, Text, Title } = Typography;
-
-const cardStyle = {
-  background: '#161b22',
-  borderRadius: 8,
-  border: '1px solid #21262d',
-};
-const headerStyle = { background: '#12181f', borderBottom: '1px solid #21262d', color: '#e6edf3' };
 
 export default function Settings() {
   const qc = useQueryClient();
@@ -64,9 +58,9 @@ export default function Settings() {
     : null;
 
   return (
-    <div style={{ padding: '28px clamp(18px, 3vw, 36px)', minHeight: '100%', color: '#e6edf3', maxWidth: 640 }}>
+    <div style={{ ...pageWrapStyle, maxWidth: 640 }}>
       <Card bordered={false} style={cardStyle} styles={{ header: headerStyle }} title="Property settings">
-        <Paragraph type="secondary" style={{ color: '#8b949e' }}>
+        <Paragraph type="secondary">
           Used across the property for signage and scheduling. Your team sees these defaults in reservation flows.
         </Paragraph>
         {updatedLabel && (
@@ -74,7 +68,7 @@ export default function Settings() {
             Last updated {updatedLabel}
           </Text>
         )}
-        <Title level={5} style={{ color: '#e6edf3', marginBottom: 12 }}>
+        <Title level={5} style={{ marginBottom: 12 }}>
           Labels & timings
         </Title>
         <Form layout="vertical" form={form} onFinish={(v) => save.mutate(v)}>

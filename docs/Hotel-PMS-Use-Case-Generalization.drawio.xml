@@ -1,0 +1,167 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-uc-generalization" name="Use Case - Generalization">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Hotel PMS — Use Case Diagram (Actor &amp;amp; Use Case Generalization)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="200" y="8" width="800" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ACTORS (top) — generalization: arrow from child → parent (hollow triangle) ========== -->
+        <mxCell id="actor-staff" value="Hotel Staff" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="50" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-receptionist" value="Receptionist" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="50" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-fom" value="Front Office&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="50" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-gm" value="General&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="480" y="50" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-admin" value="System Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="50" width="36" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- Branch actors (also specialize Hotel Staff) -->
+        <mxCell id="actor-hk" value="Housekeeping" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="200" y="150" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-hkm" value="Housekeeping&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="150" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-maint" value="Maintenance" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="480" y="150" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-maintm" value="Maintenance&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="150" width="36" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-revenue" value="Revenue Manager&#xa;/ Accountant" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="760" y="50" width="40" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- Actor generalization edges (child → parent) -->
+        <mxCell id="gen-rec-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-receptionist" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-fom-rec" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-fom" target="actor-receptionist"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-gm-fom" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-gm" target="actor-fom"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-admin-gm" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-admin" target="actor-gm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-hk-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-hk" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-hkm-hk" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-hkm" target="actor-hk"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-maint-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-maint" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-maintm-maint" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-maintm" target="actor-maint"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-rev-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=14;" edge="1" parent="1" source="actor-revenue" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- System boundary -->
+        <mxCell id="system" value="Hotel PMS System" style="swimlane;startSize=24;horizontal=1;fillColor=#fafafa;strokeColor=#333333;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="250" width="1120" height="520" as="geometry" />
+        </mxCell>
+
+        <!-- Use cases -->
+        <mxCell id="uc-login" value="Log In" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="50" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-dashboard" value="View Operations&#xa;Dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="110" width="130" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-register" value="Register Guest" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="220" y="40" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-manage-guest" value="Manage Guest Profile" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="220" y="95" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-checkin" value="Check In Guest" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="220" y="150" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-checkout" value="Check Out Guest" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="220" y="205" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-cancel" value="Cancel Reservation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="220" y="260" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-create-res" value="Create Reservation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="400" y="95" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-hk-note" value="Add Housekeeping Note" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="400" y="200" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-room-status" value="Update Room Status" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="400" y="260" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-room-inv" value="Manage Room Inventory" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="580" y="95" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-create-staff" value="Create Staff Account" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="580" y="200" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-suspend-staff" value="Suspend Staff Account" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="760" y="200" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-settings" value="Update Property Settings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="580" y="260" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-occ-report" value="View Occupancy Report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="760" y="40" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-rev-report" value="View Revenue Report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="760" y="95" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Use case generalization example: Suspend specializes Create/Manage staff -->
+        <mxCell id="uc-manage-staff" value="Manage Staff Account" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="760" y="260" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Shared included use case (like Check access rights) -->
+        <mxCell id="uc-auth" value="Authenticate User" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=2" vertex="1" parent="system">
+          <mxGeometry x="480" y="420" width="140" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- Use case generalization: Suspend → Manage Staff -->
+        <mxCell id="gen-uc-suspend-manage" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="uc-suspend-staff" target="uc-manage-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-uc-create-manage" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="uc-create-staff" target="uc-manage-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- <<include>> → Authenticate User -->
+        <mxCell id="inc-checkin" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-checkin" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-checkout" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-checkout" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-create-res" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-create-res" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-register" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-register" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-room-status" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-room-status" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-create-staff" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-create-staff" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-reports" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-occ-report" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Actor → use case (only on defining actor; inherited via generalization) -->
+        <mxCell id="a-staff-login" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-staff-dash" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-dashboard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-register" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-receptionist" target="uc-register"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-manage" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-receptionist" target="uc-manage-guest"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-checkin" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-receptionist" target="uc-checkin"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-checkout" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-receptionist" target="uc-checkout"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-cancel" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-receptionist" target="uc-cancel"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-fom-create-res" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-fom" target="uc-create-res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-hk-note" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hk" target="uc-hk-note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-hk-status" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hk" target="uc-room-status"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-maint-status" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-maint" target="uc-room-status"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-inv" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-room-inv"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-create-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-create-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-settings" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-settings"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-admin-suspend" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-admin" target="uc-suspend-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rev-occ" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-revenue" target="uc-occ-report"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rev-rev" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-revenue" target="uc-rev-report"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rev-inv" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-revenue" target="uc-room-inv"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Notes / legend -->
+        <mxCell id="legend" value="&lt;b&gt;Legend (course style)&lt;/b&gt;&lt;br&gt;&lt;br&gt;▷ Solid arrow with hollow triangle = &lt;b&gt;generalization&lt;/b&gt; (child actor inherits parent&amp;#39;s use cases)&lt;br&gt;Example: General Manager inherits Receptionist → … → Hotel Staff use cases&lt;br&gt;&lt;br&gt;- - → &amp;lt;&amp;lt;include&amp;gt;&amp;gt; = mandatory sub-step (JWT/session check on protected actions)&lt;br&gt;&lt;br&gt;▷ Between use cases = specialized behavior (e.g. Suspend Staff specializes Manage Staff Account)&lt;br&gt;&lt;br&gt;&lt;b&gt;App roles on diagram:&lt;/b&gt; SystemAdmin, GeneralManager, FrontOfficeManager, Receptionist, Housekeeping(Manager), Maintenance(Manager), RevenueManager, Accountant — no separate mapping table needed." style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="790" width="560" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="inherit-note" value="&lt;b&gt;Inheritance chains&lt;/b&gt;&lt;br&gt;Management: System Admin → General Manager → Front Office Manager → Receptionist → Hotel Staff&lt;br&gt;Housekeeping: HK Manager → Housekeeping → Hotel Staff&lt;br&gt;Maintenance: Maint Manager → Maintenance → Hotel Staff&lt;br&gt;Finance: Revenue Manager / Accountant → Hotel Staff" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="790" width="540" height="100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

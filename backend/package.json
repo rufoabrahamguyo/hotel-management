@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "init-db": "node scripts/init-db.js"
+    "init-db": "node scripts/init-db.js",
+    "seed-demo": "node scripts/seed-demo.js",
+    "test": "node --test tests/**/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -13,6 +15,10 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.2.0",
     "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
   }
 }

@@ -1,0 +1,206 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-uc" name="Use Case — Hotel PMS">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Use Case Diagram — Hotel PMS (Hotely)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="480" y="10" width="520" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== LEFT ACTORS ========== -->
+        <mxCell id="actor-staff" value="Hotel Staff" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-rec" value="Receptionist" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-fom" value="Front Office&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-hk" value="Housekeeping" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-hkm" value="Housekeeping&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-maint" value="Maintenance" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="740" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-mm" value="Maintenance&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="860" width="40" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ========== RIGHT ACTORS ========== -->
+        <mxCell id="actor-gm" value="General&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="160" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-sa" value="SystemAdmin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="300" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-rm" value="Revenue&#xa;Manager" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="460" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-acc" value="Accountant" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="580" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-public" value="Public&#xa;Registrant" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="720" width="40" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Actor generalizations (child → parent, hollow triangle) -->
+        <mxCell id="gen-rec-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-rec" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-hk-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-hk" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-maint-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-maint" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-rm-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-rm" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-acc-staff" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-acc" target="actor-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-fom-rec" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-fom" target="actor-rec"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-hkm-hk" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-hkm" target="actor-hk"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-mm-maint" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-mm" target="actor-maint"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-gm-fom" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-gm" target="actor-fom"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="120" y="200" /><mxPoint x="120" y="400" /></Array></mxGeometry></mxCell>
+        <mxCell id="gen-sa-gm" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="actor-sa" target="actor-gm"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ========== SYSTEM BOUNDARY ========== -->
+        <mxCell id="system" value="Hotel PMS System" style="swimlane;startSize=30;horizontal=1;fillColor=#fafafa;strokeColor=#333333;fontStyle=1;fontSize=13;rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="60" width="1200" height="920" as="geometry" />
+        </mxCell>
+
+        <!-- Auth / session -->
+        <mxCell id="uc-login" value="Log In" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="50" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-logout" value="Log Out" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="110" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-select" value="Select Property" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="170" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-dash" value="View Operations&#xa;Dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="40" y="230" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-auth" value="Authenticate User" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=2;" vertex="1" parent="system">
+          <mxGeometry x="40" y="820" width="140" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- Front office -->
+        <mxCell id="uc-guest" value="Manage Guests" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="240" y="50" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-res" value="Create Reservation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="240" y="110" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-checkin" value="Check In Guest" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="240" y="170" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-checkout" value="Check Out Guest" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="240" y="230" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-cancel" value="Cancel Reservation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="240" y="290" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Rooms -->
+        <mxCell id="uc-rooms" value="Manage Room&#xa;Inventory" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="460" y="110" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-room-status" value="Update Room Status" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="460" y="190" width="140" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-hk-note" value="Add Housekeeping&#xa;Note" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="460" y="260" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Staff / admin -->
+        <mxCell id="uc-staff" value="Manage Staff&#xa;Accounts" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="700" y="110" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-suspend" value="Suspend Staff&#xa;Account" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="700" y="190" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-settings" value="Update Property&#xa;Settings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="700" y="270" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-props" value="Manage Properties" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="700" y="350" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Reports -->
+        <mxCell id="uc-occ" value="View Occupancy&#xa;Report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="940" y="150" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-rev" value="View Revenue&#xa;Report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="system">
+          <mxGeometry x="940" y="230" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Public -->
+        <mxCell id="uc-register" value="Register Organization&#xa;(optional)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="system">
+          <mxGeometry x="940" y="350" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- <<include>> Authenticate -->
+        <mxCell id="inc-guest" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-guest" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-res" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-res" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-ci" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-checkin" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-co" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-checkout" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-cancel" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-cancel" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-rooms" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-rooms" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-status" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-room-status" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-staff" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-staff" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-settings" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-settings" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-props" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-props" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-occ" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-occ" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-rev" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-rev" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-select" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-select" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="inc-dash" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1" source="uc-dash" target="uc-auth"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Actor associations -->
+        <mxCell id="a-staff-login" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-login"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-staff-logout" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-logout"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-staff-select" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-select"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-staff-dash" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-staff" target="uc-dash"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-rec-guest" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rec" target="uc-guest"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-res" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rec" target="uc-res"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-ci" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rec" target="uc-checkin"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-co" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rec" target="uc-checkout"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rec-cancel" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rec" target="uc-cancel"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-fom-rooms" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-fom" target="uc-rooms"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-fom-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-fom" target="uc-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-hk-status" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hk" target="uc-room-status"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-hk-note" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hk" target="uc-hk-note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-hkm-rooms" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hkm" target="uc-rooms"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-hkm-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-hkm" target="uc-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-maint-status" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-maint" target="uc-room-status"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-mm-rooms" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-mm" target="uc-rooms"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-mm-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-mm" target="uc-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-gm-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-settings" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-settings"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-occ" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-occ"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-rev" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-rev"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-gm-suspend" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-gm" target="uc-suspend"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-sa-props" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-sa" target="uc-props"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-sa-settings" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-sa" target="uc-settings"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-sa-staff" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-sa" target="uc-staff"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-sa-suspend" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-sa" target="uc-suspend"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-rm-occ" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rm" target="uc-occ"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-rm-rev" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-rm" target="uc-rev"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-acc-occ" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-acc" target="uc-occ"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a-acc-rev" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-acc" target="uc-rev"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="a-public-reg" style="endArrow=none;html=1;" edge="1" parent="1" source="actor-public" target="uc-register"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;—— Association (actor participates)&lt;br&gt;▷ Generalization (child inherits parent associations)&lt;br&gt;- - → &amp;lt;&amp;lt;include&amp;gt;&amp;gt; (mandatory auth)&lt;br&gt;&lt;br&gt;&lt;b&gt;Roles from code:&lt;/b&gt; SystemAdmin, GeneralManager, FrontOfficeManager, HousekeepingManager, RevenueManager, MaintenanceManager, Accountant, Receptionist, Housekeeping, Maintenance.&lt;br&gt;Specialized actors inherit parent use cases (e.g. SystemAdmin inherits GM → FOM → Receptionist)." style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1000" width="900" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

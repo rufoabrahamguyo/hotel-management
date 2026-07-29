@@ -1,38 +1,59 @@
 import { theme } from 'antd';
+import { propizy } from './propizyTokens';
 
-/** Dark shell matching “ops console” style: deep navy, green status, blue primary actions. */
+/** Light Hotely shell - navy primary, gold accents, airy surfaces. */
 export const appShellTheme = {
-  algorithm: theme.darkAlgorithm,
+  algorithm: theme.defaultAlgorithm,
   token: {
-    colorPrimary: '#1f6feb',
-    colorSuccess: '#3fb950',
-    colorBgLayout: '#0d1117',
-    colorBgContainer: '#161b22',
-    colorBorder: '#30363d',
-    colorBorderSecondary: '#21262d',
-    colorText: '#e6edf3',
-    colorTextSecondary: '#8b949e',
-    colorTextDescription: '#6e7681',
+    colorPrimary: '#1890ff',
+    colorSuccess: propizy.success,
+    colorWarning: propizy.caution,
+    colorError: propizy.alert,
+    colorInfo: '#1890ff',
+    colorBgLayout: '#f0f2f5',
+    colorBgContainer: propizy.surface,
+    colorBorder: '#f0f0f0',
+    colorBorderSecondary: '#f0f0f0',
+    colorText: '#262626',
+    colorTextSecondary: '#8c8c8c',
+    colorTextDescription: '#8c8c8c',
+    colorTextPlaceholder: '#bfbfbf',
     borderRadius: 8,
     fontFamily:
-      "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      "'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    controlHeight: 40,
   },
   components: {
     Layout: {
-      bodyBg: '#0d1117',
-      headerBg: '#12181f',
-      siderBg: '#151b24',
-      triggerBg: '#151b24',
+      bodyBg: propizy.bg,
+      headerBg: propizy.surface,
+      siderBg: propizy.navy,
+      triggerBg: propizy.navy,
     },
     Card: {
-      colorBgContainer: '#1a222d',
+      colorBgContainer: propizy.surface,
+      paddingLG: 20,
+      borderRadiusLG: 8,
     },
     Input: {
-      colorBgContainer: '#0d1117',
-      colorBorder: '#30363d',
+      colorBgContainer: propizy.surface,
+      colorText: propizy.text,
+      colorTextPlaceholder: propizy.muted,
+      activeBorderColor: '#1890ff',
+      hoverBorderColor: '#40a9ff',
+    },
+    Menu: {
+      darkItemBg: 'transparent',
+      darkSubMenuItemBg: 'transparent',
+      darkItemSelectedBg: 'rgba(24, 144, 255, 0.22)',
+      darkItemHoverBg: 'rgba(255, 255, 255, 0.06)',
+      darkItemSelectedColor: '#fff',
+      darkItemColor: 'rgba(244, 246, 248, 0.78)',
+      itemBorderRadius: 8,
     },
     Button: {
-      colorPrimaryHover: '#388bfd',
+      colorPrimaryHover: '#40a9ff',
     },
   },
 };
+

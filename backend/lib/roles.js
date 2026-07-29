@@ -120,3 +120,10 @@ export function canDeleteTarget(actorRole, actorId, target) {
 export function canChangeStatus(actorRole, actorId, target) {
   return canDeleteTarget(actorRole, actorId, target);
 }
+
+/** Roles that may update property settings (name, timezone, check-in/out). */
+export const SETTINGS_WRITE_ROLES = [ROLES.SYSTEM_ADMIN, ROLES.GENERAL_MANAGER];
+
+export function canWriteSettings(role) {
+  return SETTINGS_WRITE_ROLES.includes(normalizeJwtRole(role));
+}

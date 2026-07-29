@@ -1,0 +1,165 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-class-domain" name="Class Diagram — Domain (Fig 4.3/4.4 style)">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Figure 4.3/4.4 style: Class Diagram — Hotel PMS Domain Model" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="220" y="10" width="660" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== CLASSES with attributes (-) and operations (+) ========== -->
+
+        <mxCell id="class-staff" value="Staff" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="220" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attrs" value="- id: int&#xa;- name: String&#xa;- username: String&#xa;- role: StaffRole&#xa;- status: Boolean&#xa;- manager: Staff" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-staff">
+          <mxGeometry y="26" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-ops" value="+ login(u: String, p: String): Boolean&#xa;+ createStaff(dto: StaffDto): Staff&#xa;+ suspend(id: int): void&#xa;+ listVisible(): Staff[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-staff">
+          <mxGeometry y="126" width="220" height="74" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-guest" value="Guest" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="320" y="60" width="200" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-attrs" value="- id: int&#xa;- fullName: String&#xa;- email: String&#xa;- phone: String&#xa;- documentId: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest">
+          <mxGeometry y="26" width="200" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-ops" value="+ register(dto: GuestDto): void&#xa;+ updateProfile(dto: GuestDto): void&#xa;+ display(): Guest" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest">
+          <mxGeometry y="110" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-room" value="Room" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="room-attrs" value="- id: int&#xa;- number: String&#xa;- floor: int&#xa;- type: String&#xa;- status: RoomStatus&#xa;- baseRate: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room">
+          <mxGeometry y="26" width="200" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="room-ops" value="+ updateStatus(s: RoomStatus): void&#xa;+ addHousekeepingNote(n: String): void&#xa;+ isAvailable(from, to: Date): Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room">
+          <mxGeometry y="122" width="200" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-reservation" value="Reservation" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="320" y="300" width="230" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="res-attrs" value="- id: int&#xa;- checkIn: Date&#xa;- checkOut: Date&#xa;- status: ReservationStatus&#xa;- adults: int&#xa;- totalRate: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-reservation">
+          <mxGeometry y="26" width="230" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="res-ops" value="+ create(g: Guest, r: Room, dates): Reservation&#xa;+ checkIn(): void&#xa;+ checkOut(): void&#xa;+ cancel(permanent: Boolean): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-reservation">
+          <mxGeometry y="122" width="230" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-hotel" value="HotelProperty" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="hotel-attrs" value="- propertyName: String&#xa;- timezone: String&#xa;- defaultCheckIn: String&#xa;- defaultCheckOut: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-hotel">
+          <mxGeometry y="26" width="220" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="hotel-ops" value="+ updateSettings(dto): void&#xa;+ getSettings(): HotelProperty" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-hotel">
+          <mxGeometry y="94" width="220" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-report" value="Report" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="620" y="320" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="report-ops" value="+ occupancy(): OccupancySummary&#xa;+ revenue(): RevenueSummary" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-report">
+          <mxGeometry y="26" width="200" height="84" as="geometry" />
+        </mxCell>
+
+        <!-- Generalisation super-class (Fig 4.4) -->
+        <mxCell id="class-room-status-enum" value="RoomStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="840" y="60" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="room-status-ops" value="+ label(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room-status-enum">
+          <mxGeometry y="26" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-vacant" value="Vacant" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="820" y="160" width="100" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="class-occupied" value="Occupied" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="940" y="160" width="100" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="class-dirty" value="Dirty" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="880" y="240" width="100" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Generalization edges (subclass → superclass) -->
+        <mxCell id="gen-vacant" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="class-vacant" target="class-room-status-enum"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-occupied" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="class-occupied" target="class-room-status-enum"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="gen-dirty" style="endArrow=block;endFill=0;html=1;rounded=0;endSize=12;" edge="1" parent="1" source="class-dirty" target="class-room-status-enum"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ========== ASSOCIATIONS ========== -->
+
+        <!-- Staff self-reference -->
+        <mxCell id="rel-staff-mgr" value="- manager&#xa;0..1" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=1;exitY=0.3;entryX=1;entryY=0.7;edgeStyle=orthogonalEdgeStyle;fontSize=10;" edge="1" parent="1" source="class-staff" target="class-staff">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="120" />
+              <mxPoint x="280" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-staff-reports" value="- reports&#xa;0..*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1" source="class-staff" target="class-staff">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="270" y="200" />
+              <mxPoint x="270" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Guest — Reservation (bidirectional) -->
+        <mxCell id="rel-guest-res" value="- reservations&#xa;0..*" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=0.5;exitY=1;entryX=0;entryY=0.3;fontSize=10;" edge="1" parent="1" source="class-guest" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-res-guest" value="- guest&#xa;1" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1" source="class-reservation" target="class-guest">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="340" as="sourcePoint" />
+            <mxPoint x="420" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Room — Reservation (bidirectional) -->
+        <mxCell id="rel-room-res" value="- reservations&#xa;0..*" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=0.5;exitY=1;entryX=1;entryY=0.3;fontSize=10;" edge="1" parent="1" source="class-room" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-res-room" value="- room&#xa;1" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1" source="class-reservation" target="class-room">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Aggregation: HotelProperty ◇—— Room (whole/part) -->
+        <mxCell id="rel-hotel-room" value="- rooms&#xa;1..*" style="endArrow=diamondThin;endFill=0;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;startArrow=none;startFill=0;endSize=14;fontSize=10;" edge="1" parent="1" source="class-hotel" target="class-room">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="385" />
+              <mxPoint x="300" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========== DEPENDENCIES (dotted arrow, Fig 4.2) ========== -->
+        <mxCell id="dep-res-guest" value="" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0;exitY=0.2;entryX=1;entryY=0.8;" edge="1" parent="1" source="class-reservation" target="class-guest">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-res-room" value="" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.2;entryX=0;entryY=0.8;" edge="1" parent="1" source="class-reservation" target="class-room">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-report-res" value="" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="class-report" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-room-status" value="" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="class-room" target="class-room-status-enum">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="&lt;b&gt;Legend (Ch. 4 notation)&lt;/b&gt;&lt;br&gt;- private attribute / + public operation&lt;br&gt;Solid arrow = association (role + multiplicity at target side)&lt;br&gt;◇ hollow diamond = aggregation (HotelProperty owns Rooms)&lt;br&gt;- - → = dependency (uses type in operation parameter)&lt;br&gt;▷ = generalization / inheritance (Vacant, Occupied, Dirty → RoomStatus)" style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="480" height="100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

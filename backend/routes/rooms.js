@@ -1,17 +1,19 @@
 import { Router } from 'express';
 import { pool } from '../db/pool.js';
-import { requireStaffJwt } from '../middleware/requireStaffJwt.js';
+import { requireStaffJwt, requirePropertyContext } from '../middleware/requireStaffJwt.js';
+import { requireFeature } from '../lib/permissions.js';
 
 const router = Router();
-router.use(requireStaffJwt);
+router.use(requireStaffJwt, requirePropertyContext, requireFeature('rooms'));
 
 export const ROOM_STATUSES = ['vacant', 'occupied', 'dirty', 'cleaning', 'inspecting', 'maintenance'];
 
-router.get('/', async (_req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT id, number, floor, type, status, housekeeping_note, base_rate, created_at
-       FROM room ORDER BY floor ASC, number ASC`,
+       FROM room WHERE property_id = $1 ORDER BY floor ASC, number ASC`,
+      [req.auth.propertyId],
     );
     return res.json({ rooms: rows });
   } catch (err) {
@@ -31,10 +33,10 @@ router.post('/', async (req, res) => {
   }
   try {
     const { rows } = await pool.query(
-      `INSERT INTO room (number, floor, type, status, housekeeping_note, base_rate)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO room (property_id, number, floor, type, status, housekeeping_note, base_rate)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id, number, floor, type, status, housekeeping_note, base_rate, created_at`,
-      [num, Number(floor) || 1, String(type || 'Standard').slice(0, 100), status, housekeeping_note, Number(base_rate) || 0],
+      [req.auth.propertyId, num, Number(floor) || 1, String(type || 'Standard').slice(0, 100), status, housekeeping_note, Number(base_rate) || 0],
     );
     return res.status(201).json({ room: rows[0] });
   } catch (err) {
@@ -53,14 +55,13 @@ router.patch('/:id', async (req, res) => {
   }
   const { number, floor, type, status, housekeeping_note, base_rate } = req.body ?? {};
   try {
-    const { rows: curRows } = await pool.query(`SELECT id FROM room WHERE id = $1`, [id]);
+    const { rows: curRows } = await pool.query(`SELECT id FROM room WHERE id = $1 AND property_id = $2`, [id, req.auth.propertyId]);
     if (curRows.length === 0) {
       return res.status(404).json({ error: 'Not found', message: 'Room not found.' });
     }
 
     const fields = [];
     const vals = [];
-    let n = 0;
     function add(col, val) {
       fields.push(`${col} = $${fields.length + 1}`);
       vals.push(val);
@@ -80,10 +81,10 @@ router.patch('/:id', async (req, res) => {
     if (!fields.length) {
       return res.status(400).json({ error: 'Validation', message: 'No updates provided.' });
     }
-    vals.push(id);
+    vals.push(id, req.auth.propertyId);
     const { rows } = await pool.query(
       `UPDATE room SET ${fields.join(', ')}
-       WHERE id = $${fields.length + 1}
+       WHERE id = $${fields.length + 1} AND property_id = $${fields.length + 2}
        RETURNING id, number, floor, type, status, housekeeping_note, base_rate, created_at`,
       vals,
     );
@@ -103,7 +104,7 @@ router.delete('/:id', async (req, res) => {
     return res.status(400).json({ error: 'Validation', message: 'Invalid room id.' });
   }
   try {
-    await pool.query(`DELETE FROM room WHERE id = $1`, [id]);
+    await pool.query(`DELETE FROM room WHERE id = $1 AND property_id = $2`, [id, req.auth.propertyId]);
     return res.status(204).send();
   } catch (err) {
     if (err.code === '23503') {

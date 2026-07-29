@@ -1,0 +1,291 @@
+<mxfile host="app.diagrams.net" agent="Hotel PMS" version="22.1.0" type="device">
+  <diagram id="hotel-pms-class-diagram" name="Class Diagram">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Figure 1: Class Diagram — Hotel PMS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="320" y="10" width="560" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== PACKAGE: Domain (entities) ========== -->
+        <mxCell id="pkg-domain" value="«domain» Persistence Model" style="swimlane;startSize=28;horizontal=1;fillColor=#f8f9fa;strokeColor=#333333;fontStyle=1;fontSize=12;rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="50" width="520" height="560" as="geometry" />
+        </mxCell>
+
+        <!-- Staff -->
+        <mxCell id="class-staff" value="Staff" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="30" y="45" width="220" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attrs" value="- id: int&#xa;- name: string&#xa;- role: StaffRole&#xa;- username: string&#xa;- email: string?&#xa;- passwordHash: string&#xa;- status: active | suspended&#xa;- managerStaffId: int?&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-staff">
+          <mxGeometry y="26" width="220" height="174" as="geometry" />
+        </mxCell>
+
+        <!-- Room -->
+        <mxCell id="class-room" value="Room" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="280" y="45" width="210" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="room-attrs" value="- id: int&#xa;- number: string&#xa;- floor: int&#xa;- type: string&#xa;- status: RoomStatus&#xa;- housekeepingNote: string?&#xa;- baseRate: decimal&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room">
+          <mxGeometry y="26" width="210" height="144" as="geometry" />
+        </mxCell>
+
+        <!-- Guest -->
+        <mxCell id="class-guest" value="Guest" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="30" y="270" width="200" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-attrs" value="- id: int&#xa;- fullName: string&#xa;- email: string?&#xa;- phone: string?&#xa;- documentId: string?&#xa;- notes: string?&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest">
+          <mxGeometry y="26" width="200" height="124" as="geometry" />
+        </mxCell>
+
+        <!-- Reservation -->
+        <mxCell id="class-reservation" value="Reservation" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="260" y="250" width="230" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="reservation-attrs" value="- id: int&#xa;- guestId: int&#xa;- roomId: int&#xa;- checkIn: DateTime&#xa;- checkOut: DateTime&#xa;- status: ReservationStatus&#xa;- adults: int&#xa;- totalRate: decimal?&#xa;- notes: string?&#xa;- createdAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-reservation">
+          <mxGeometry y="26" width="230" height="164" as="geometry" />
+        </mxCell>
+
+        <!-- HotelSetting -->
+        <mxCell id="class-setting" value="HotelSetting" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="30" y="450" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="setting-attrs" value="- id: 1 (singleton)&#xa;- propertyName: string&#xa;- timezone: string&#xa;- defaultCheckIn: string&#xa;- defaultCheckOut: string&#xa;- updatedAt: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-setting">
+          <mxGeometry y="26" width="220" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- Enumerations -->
+        <mxCell id="enum-staff-role" value="«enumeration»&#xa;StaffRole" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="pkg-domain">
+          <mxGeometry x="280" y="460" width="210" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="enum-staff-role-values" value="SystemAdmin, GeneralManager,&#xa;FrontOfficeManager, Receptionist,&#xa;HousekeepingManager, Housekeeping, …" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="enum-staff-role">
+          <mxGeometry y="40" width="210" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== PACKAGE: Backend API ========== -->
+        <mxCell id="pkg-api" value="«api» Express Backend" style="swimlane;startSize=28;horizontal=1;fillColor=#f8f9fa;strokeColor=#333333;fontStyle=1;fontSize=12;rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="310" height="560" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-app" value="HotelApiApp" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="40" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="app-methods" value="+ start(): void&#xa;+ mountRoutes(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-app">
+          <mxGeometry y="26" width="270" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-auth-routes" value="AuthRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="125" width="270" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-routes-methods" value="+ login(email, password): JwtToken" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-auth-routes">
+          <mxGeometry y="26" width="270" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-admin-routes" value="AdminStaffRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="195" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-routes-methods" value="+ listStaff(): Staff[]&#xa;+ createStaff(dto): Staff&#xa;+ updateStaff(id, dto): Staff&#xa;+ deleteStaff(id): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-admin-routes">
+          <mxGeometry y="26" width="270" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-guest-routes" value="GuestRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="300" width="270" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="guest-routes-methods" value="+ listGuests(): Guest[]&#xa;+ createGuest(dto): Guest&#xa;+ updateGuest(id, dto): Guest&#xa;+ deleteGuest(id): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-guest-routes">
+          <mxGeometry y="26" width="270" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-room-routes" value="RoomRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="395" width="270" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="room-routes-methods" value="+ listRooms(): Room[]&#xa;+ createRoom(dto): Room&#xa;+ updateRoom(id, dto): Room&#xa;+ deleteRoom(id): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-room-routes">
+          <mxGeometry y="26" width="270" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-res-routes" value="ReservationRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="pkg-api">
+          <mxGeometry x="160" y="490" width="130" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="res-routes-methods" value="+ checkIn(id)&#xa;+ checkOut(id)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="class-res-routes">
+          <mxGeometry y="26" width="130" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-report-routes" value="ReportRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="490" width="120" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="report-routes-methods" value="+ getSummary()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="class-report-routes">
+          <mxGeometry y="26" width="120" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-role-policy" value="RolePolicy" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="pkg-api">
+          <mxGeometry x="20" y="560" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="role-policy-methods" value="+ creatableRolesForActor(role)&#xa;+ canDeleteTarget(actor, target)&#xa;+ listStaffVisibility(role, id)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="class-role-policy">
+          <mxGeometry y="26" width="270" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- ========== PACKAGE: Frontend ========== -->
+        <mxCell id="pkg-client" value="«client» React Frontend" style="swimlane;startSize=28;horizontal=1;fillColor=#f8f9fa;strokeColor=#333333;fontStyle=1;fontSize=12;rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="50" width="250" height="560" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-auth-store" value="AuthStore" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pkg-client">
+          <mxGeometry x="20" y="40" width="210" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-store-attrs" value="- token: string?&#xa;- user: StaffUser?&#xa;- sessionStartedAt: number?" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-auth-store">
+          <mxGeometry y="26" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-store-methods" value="+ setSession(token, user)&#xa;+ clearSession()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-auth-store">
+          <mxGeometry y="66" width="210" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-api-client" value="ApiClient" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pkg-client">
+          <mxGeometry x="20" y="145" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="api-client-methods" value="- baseURL: string&#xa;+ get/post/patch/delete()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-api-client">
+          <mxGeometry y="26" width="210" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-pages" value="«pages»" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="pkg-client">
+          <mxGeometry x="20" y="230" width="210" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="pages-list" value="LoginPage&#xa;DashboardPage&#xa;GuestsPage&#xa;RoomsPage&#xa;ReportsPage&#xa;SettingsPage&#xa;CreateStaffPage" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-pages">
+          <mxGeometry y="26" width="210" height="174" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-session-mgr" value="SessionManager" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="pkg-client">
+          <mxGeometry x="20" y="445" width="210" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="session-mgr-methods" value="+ enforceIdleTimeout()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-session-mgr">
+          <mxGeometry y="26" width="210" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="class-role-route" value="RoleRoute" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="pkg-client">
+          <mxGeometry x="20" y="515" width="210" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="role-route-methods" value="+ guardByRole(allowedRoles)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="class-role-route">
+          <mxGeometry y="26" width="210" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== DOMAIN ASSOCIATIONS ========== -->
+
+        <!-- Staff self-reference: manages -->
+        <mxCell id="rel-staff-manages" value="manages&#xa;0..1" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;fontSize=10;" edge="1" parent="1" source="class-staff" target="class-staff">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <mxPoint x="620" y="140" as="sourcePoint" />
+            <mxPoint x="650" y="200" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="650" y="140" />
+              <mxPoint x="650" y="200" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-staff-reports" value="reports to&#xa;0..*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1" source="class-staff" target="class-staff">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="200" as="sourcePoint" />
+            <mxPoint x="620" y="140" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="630" y="200" />
+              <mxPoint x="630" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Staff uses StaffRole -->
+        <mxCell id="rel-staff-role" value="" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="class-staff" target="enum-staff-role">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Guest → Reservation -->
+        <mxCell id="rel-guest-res" value="1" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.35;fontSize=10;" edge="1" parent="1" source="class-guest" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-res-guest" value="0..*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="640" y="420" as="sourcePoint" />
+            <mxPoint x="640" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Room → Reservation -->
+        <mxCell id="rel-room-res" value="1" style="endArrow=open;html=1;rounded=0;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;" edge="1" parent="1" source="class-room" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-res-room" value="0..*" style="endArrow=open;html=1;rounded=0;endFill=0;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="775" y="380" as="sourcePoint" />
+            <mxPoint x="775" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========== API → DOMAIN DEPENDENCIES ========== -->
+
+        <mxCell id="dep-auth-staff" value="«reads»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.2;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-auth-routes" target="class-staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-admin-staff" value="«CRUD»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-admin-routes" target="class-staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-admin-role" value="«uses»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-admin-routes" target="class-role-policy">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="195" y="640" />
+              <mxPoint x="60" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="dep-guest-entity" value="«CRUD»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-guest-routes" target="class-guest">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-room-entity" value="«CRUD»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.35;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-room-routes" target="class-room">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-res-entity" value="«CRUD»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.65;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-res-routes" target="class-reservation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-report" value="«aggregates»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.8;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-report-routes" target="class-reservation">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="568" />
+              <mxPoint x="360" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========== CLIENT → API ========== -->
+
+        <mxCell id="dep-api-auth" value="HTTP" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-api-client" target="class-app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-pages-api" value="«uses»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.7;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-pages" target="class-api-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-login-auth" value="«uses»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-auth-store" target="class-api-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep-session-auth" value="«uses»" style="endArrow=open;html=1;rounded=0;endFill=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontSize=10;fontColor=#666666;" edge="1" parent="1" source="class-session-mgr" target="class-auth-store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend" style="swimlane;startSize=22;horizontal=1;fillColor=#ffffff;strokeColor=#999999;fontStyle=1;fontSize=11;rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="310" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-text" value="Solid arrows — associations (multiplicity on ends)&#xa;Dashed arrows — dependencies («uses», «CRUD», HTTP)&#xa;Self-link on Staff — manager_staff_id hierarchy&#xa;Maps to PostgreSQL tables: staff, room, guest, reservation, hotel_setting" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#444444;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry x="8" y="28" width="300" height="70" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

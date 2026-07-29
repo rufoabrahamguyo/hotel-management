@@ -1,30 +1,30 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Form, Input, Button, Select, Typography, Card, Alert, Table, Popconfirm, Tag, Space } from 'antd';
-import {
-  TeamOutlined,
-  UserOutlined,
-  IdcardOutlined,
-  LockOutlined,
-  DeleteOutlined,
-  StopOutlined,
-  CheckCircleOutlined,
-} from '@ant-design/icons';
+import { Form, Input, Button, Select, Typography, Card, Alert, Table, Popconfirm, Tag, Space, Modal } from 'antd';
 import toast from 'react-hot-toast';
-import dayjs from 'dayjs';
 import { api } from '../../services/api';
-import { ROLE_DESCRIPTIONS, normalizeRole } from '../../auth/roles';
+import { ROLE_DESCRIPTIONS, ROLE_LABELS, roleLabel } from '../../auth/roles';
 import { useAuthStore } from '../../store/authstore';
+import { pageCardStyle, pageWrapStyle } from '../../layout/pageStyles';
+import { AccountStatusPill } from '../../components/StatusPill';
 
 const { Title, Text } = Typography;
 
 export default function ManageStaff() {
   const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   const [listLoading, setListLoading] = useState(true);
   const [creatableRoles, setCreatableRoles] = useState([]);
   const [rolesLoading, setRolesLoading] = useState(true);
   const [staff, setStaff] = useState([]);
+  const [assignableProperties, setAssignableProperties] = useState([]);
+  const [editing, setEditing] = useState(null);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
   const currentUserId = useAuthStore((s) => s.user?.id);
+  const sessionProperties = useAuthStore((s) => s.properties);
+  const propertyNameById = new Map(
+    [...(sessionProperties ?? []), ...(assignableProperties ?? [])].map((p) => [p.id, p.name]),
+  );
 
   const loadCreatableRoles = useCallback(async () => {
     setRolesLoading(true);
@@ -51,6 +51,15 @@ export default function ManageStaff() {
     }
   }, []);
 
+  const loadAssignableProperties = useCallback(async () => {
+    try {
+      const { data } = await api.get('/auth/properties');
+      setAssignableProperties(data.properties ?? []);
+    } catch {
+      setAssignableProperties(sessionProperties);
+    }
+  }, [sessionProperties]);
+
   useEffect(() => {
     loadCreatableRoles();
   }, [loadCreatableRoles]);
@@ -58,6 +67,10 @@ export default function ManageStaff() {
   useEffect(() => {
     loadStaff();
   }, [loadStaff]);
+
+  useEffect(() => {
+    loadAssignableProperties();
+  }, [loadAssignableProperties]);
 
   const handleFinish = async (values) => {
     setLoading(true);
@@ -67,6 +80,7 @@ export default function ManageStaff() {
         role: values.role,
         username: values.username.trim().toLowerCase(),
         password: values.password,
+        property_ids: values.property_ids,
       });
       toast.success('Staff member created.');
       form.resetFields();
@@ -81,6 +95,40 @@ export default function ManageStaff() {
       toast.error(typeof msg === 'string' ? msg : 'Request failed.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openEdit = (record) => {
+    setEditing(record);
+    editForm.setFieldsValue({
+      name: record.name,
+      role: record.role,
+      property_ids: record.property_ids?.length ? record.property_ids : undefined,
+      password: '',
+      confirm: '',
+    });
+  };
+
+  const handleEditFinish = async (values) => {
+    if (!editing) return;
+    setEditLoading(true);
+    try {
+      const body = {
+        name: values.name.trim(),
+        role: values.role,
+        property_ids: values.property_ids ?? [],
+      };
+      if (values.password) body.password = values.password;
+      await api.patch(`/admin/staff/${editing.id}`, body);
+      toast.success('Staff member updated.');
+      setEditing(null);
+      editForm.resetFields();
+      loadStaff();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Could not update staff.';
+      toast.error(typeof msg === 'string' ? msg : 'Request failed.');
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -108,62 +156,85 @@ export default function ManageStaff() {
 
   const canSubmitForm = creatableRoles.length > 0 && !rolesLoading;
 
+  const editRoleOptions = (() => {
+    const set = new Set(creatableRoles);
+    if (editing?.role) set.add(editing.role);
+    return [...set];
+  })();
+
   return (
-    <div style={{ padding: '28px clamp(18px, 4vw, 40px)', maxWidth: 1000, margin: '0 auto', color: '#e6edf3' }}>
-      <Card style={{ marginBottom: 24, background: '#161b22', border: '1px solid #21262d' }} variant="borderless">
-        <Title level={3} style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 10, color: '#e6edf3' }}>
-          <TeamOutlined />
+    <div style={pageWrapStyle}>
+      <Card style={{ marginBottom: 16, ...pageCardStyle }} variant="borderless">
+        <Title level={4} style={{ marginTop: 0, marginBottom: 4, fontWeight: 600 }}>
           Staff accounts
         </Title>
+        <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+          People who can sign in to this organization.
+        </Text>
 
         <Table
-          style={{ marginTop: 16 }}
+          size="middle"
+          scroll={{ x: 800 }}
           rowKey="id"
           loading={listLoading}
           dataSource={staff}
-          pagination={{ pageSize: 8 }}
+          pagination={{ pageSize: 8, hideOnSinglePage: true }}
           columns={[
-            { title: 'Name', dataIndex: 'name' },
+            {
+              title: 'Name',
+              dataIndex: 'name',
+              ellipsis: true,
+              render: (name, record) => (
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 500 }}>{name}</div>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    @{record.username}
+                  </Text>
+                </div>
+              ),
+            },
             {
               title: 'Role',
               dataIndex: 'role',
-              render: (r) => {
-                const rn = normalizeRole(r) ?? r;
-                return (
-                  <>
-                    <Tag color="blue">{r}</Tag>
-                    {ROLE_DESCRIPTIONS[rn] && (
-                      <Text type="secondary" style={{ display: 'block', fontSize: 12 }}>
-                        {ROLE_DESCRIPTIONS[rn]}
-                      </Text>
-                    )}
-                  </>
-                );
-              },
+              width: 170,
+              render: (r) => <Tag>{roleLabel(r)}</Tag>,
             },
             {
               title: 'Status',
               dataIndex: 'status',
-              width: 110,
-              render: (s) =>
-                s === 'suspended' ? <Tag color="red">Suspended</Tag> : <Tag color="green">Active</Tag>,
-            },
-            { title: 'Username', dataIndex: 'username' },
-            { title: 'Email', dataIndex: 'email', render: (e) => e || '-' },
-            {
-              title: 'Added',
-              dataIndex: 'created_at',
-              render: (d) => (d ? dayjs(d).format('MMM D, YYYY') : '-'),
+              width: 100,
+              render: (s) => <AccountStatusPill status={s} />,
             },
             {
-              title: 'Actions',
+              title: 'Properties',
+              dataIndex: 'property_ids',
+              ellipsis: true,
+              render: (ids) =>
+                !ids?.length ? (
+                  <Text type="secondary">All</Text>
+                ) : (
+                  <span>
+                    {ids.map((id) => (
+                      <Tag key={id}>{propertyNameById.get(id) ?? `#${id}`}</Tag>
+                    ))}
+                  </span>
+                ),
+            },
+            {
+              title: '',
               key: 'actions',
               width: 220,
+              fixed: 'right',
               render: (_, record) => {
                 const isSelf = currentUserId != null && Number(record.id) === Number(currentUserId);
                 const suspended = record.status === 'suspended';
                 return (
-                  <Space size={0} wrap>
+                  <Space size={4} wrap={false}>
+                    {!isSelf && (
+                      <Button type="link" size="small" onClick={() => openEdit(record)}>
+                        Edit
+                      </Button>
+                    )}
                     {!isSelf &&
                       (!suspended ? (
                         <Popconfirm
@@ -174,17 +245,12 @@ export default function ManageStaff() {
                           okButtonProps={{ danger: true }}
                           onConfirm={() => patchStatus(record, 'suspended')}
                         >
-                          <Button type="text" danger size="small" icon={<StopOutlined />}>
+                          <Button type="link" danger size="small">
                             Suspend
                           </Button>
                         </Popconfirm>
                       ) : (
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<CheckCircleOutlined />}
-                          onClick={() => patchStatus(record, 'active')}
-                        >
+                        <Button type="link" size="small" onClick={() => patchStatus(record, 'active')}>
                           Activate
                         </Button>
                       ))}
@@ -197,7 +263,7 @@ export default function ManageStaff() {
                         okButtonProps={{ danger: true }}
                         onConfirm={() => handleDelete(record)}
                       >
-                        <Button type="text" danger size="small" icon={<DeleteOutlined />}>
+                        <Button type="link" danger size="small">
                           Remove
                         </Button>
                       </Popconfirm>
@@ -210,8 +276,8 @@ export default function ManageStaff() {
         />
       </Card>
 
-      <Card style={{ background: '#161b22', border: '1px solid #21262d' }} variant="borderless">
-        <Title level={5} style={{ color: '#e6edf3' }}>
+      <Card style={pageCardStyle} variant="borderless">
+        <Title level={5} style={{ marginTop: 0 }}>
           Add staff member
         </Title>
         {!canSubmitForm && !rolesLoading && (
@@ -220,7 +286,7 @@ export default function ManageStaff() {
             type="warning"
             showIcon
             message="No roles to assign"
-            description="Your current role cannot create accounts (e.g. Revenue Manager). Ask your General Manager or System Administrator."
+            description="Your current role cannot create accounts. Ask a general manager or system admin."
           />
         )}
         <Form form={form} layout="vertical" requiredMark={false} onFinish={handleFinish} size="large">
@@ -229,7 +295,7 @@ export default function ManageStaff() {
             name="name"
             rules={[{ required: true, message: 'Enter the staff member’s name.' }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="your name" autoComplete="name" />
+            <Input placeholder="Full name" autoComplete="name" />
           </Form.Item>
 
           <Form.Item label="Role" name="role" rules={[{ required: true, message: 'Select a role.' }]}>
@@ -237,10 +303,33 @@ export default function ManageStaff() {
               loading={rolesLoading}
               placeholder="Select role"
               disabled={!canSubmitForm}
+              optionLabelProp="label"
               options={creatableRoles.map((r) => ({
                 value: r,
-                label: ROLE_DESCRIPTIONS[r] ? `${r} - ${ROLE_DESCRIPTIONS[r]}` : r,
+                label: ROLE_LABELS[r] || roleLabel(r),
+                description: ROLE_DESCRIPTIONS[r],
               }))}
+              optionRender={(option) => (
+                <div>
+                  <div>{option.data.label}</div>
+                  {option.data.description ? (
+                    <div style={{ fontSize: 12, color: '#8c8c8c' }}>{option.data.description}</div>
+                  ) : null}
+                </div>
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Properties"
+            name="property_ids"
+            rules={[{ required: true, message: 'Assign at least one property.' }]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select properties"
+              disabled={!canSubmitForm}
+              options={assignableProperties.map((p) => ({ value: p.id, label: p.name }))}
             />
           </Form.Item>
 
@@ -256,7 +345,7 @@ export default function ManageStaff() {
               },
             ]}
           >
-            <Input prefix={<IdcardOutlined />} placeholder="your.username" autoComplete="username" />
+            <Input placeholder="username" autoComplete="username" />
           </Form.Item>
 
           <Form.Item
@@ -267,7 +356,7 @@ export default function ManageStaff() {
               { min: 8, message: 'At least 8 characters.' },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="••••••••" autoComplete="new-password" />
+            <Input.Password placeholder="Password" autoComplete="new-password" />
           </Form.Item>
 
           <Form.Item
@@ -286,16 +375,92 @@ export default function ManageStaff() {
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="••••••••" autoComplete="new-password" />
+            <Input.Password placeholder="Confirm password" autoComplete="new-password" />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0 }}>
-            <Button type="primary" htmlType="submit" block loading={loading} disabled={!canSubmitForm}>
+            <Button type="primary" htmlType="submit" loading={loading} disabled={!canSubmitForm}>
               Save staff member
             </Button>
           </Form.Item>
         </Form>
       </Card>
+
+      <Modal
+        centered
+        destroyOnClose
+        open={Boolean(editing)}
+        title={editing ? `Edit ${editing.name}` : 'Edit staff'}
+        onCancel={() => {
+          setEditing(null);
+          editForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form form={editForm} layout="vertical" requiredMark={false} onFinish={handleEditFinish} size="large">
+          <Form.Item
+            label="Full name"
+            name="name"
+            rules={[{ required: true, message: 'Enter the staff member’s name.' }]}
+          >
+            <Input placeholder="Full name" />
+          </Form.Item>
+          <Form.Item label="Role" name="role" rules={[{ required: true, message: 'Select a role.' }]}>
+            <Select
+              loading={rolesLoading}
+              placeholder="Select role"
+              optionLabelProp="label"
+              options={editRoleOptions.map((r) => ({
+                value: r,
+                label: ROLE_LABELS[r] || roleLabel(r),
+                description: ROLE_DESCRIPTIONS[r],
+              }))}
+              optionRender={(option) => (
+                <div>
+                  <div>{option.data.label}</div>
+                  {option.data.description ? (
+                    <div style={{ fontSize: 12, color: '#8c8c8c' }}>{option.data.description}</div>
+                  ) : null}
+                </div>
+              )}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Properties"
+            name="property_ids"
+            rules={[{ required: true, message: 'Assign at least one property.' }]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select properties"
+              options={assignableProperties.map((p) => ({ value: p.id, label: p.name }))}
+            />
+          </Form.Item>
+          <Form.Item label="New password (optional)" name="password" rules={[{ min: 8, message: 'At least 8 characters.' }]}>
+            <Input.Password placeholder="Leave blank to keep current" autoComplete="new-password" />
+          </Form.Item>
+          <Form.Item
+            label="Confirm new password"
+            name="confirm"
+            dependencies={['password']}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const pwd = getFieldValue('password');
+                  if (!pwd) return Promise.resolve();
+                  if (value === pwd) return Promise.resolve();
+                  return Promise.reject(new Error('Passwords do not match.'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Confirm password" autoComplete="new-password" />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={editLoading} block>
+            Save changes
+          </Button>
+        </Form>
+      </Modal>
     </div>
   );
 }
